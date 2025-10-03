@@ -2,7 +2,7 @@ import axios from 'axios'
 import { getToken, clearToken } from '../utils/auth'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://skycrm-backend.onrender.com"
+  baseURL: import.meta.env.VITE_API_URL || "https://skycrm-backend.onrender.com/api"
 })
 
 api.interceptors.request.use(cfg => {
