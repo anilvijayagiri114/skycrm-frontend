@@ -91,24 +91,15 @@ export default function LoginPage() {
       });
       console.log('Login successful:', data);
       setToken(data.token);
-      
-      // Redirect based on role
-      const roleName = data.user.roleName;
-      switch(roleName) {
-        case 'Sales Manager':
-          nav("/manager");
-          break;
-        case 'Admin':
-          nav("/admin");
-          break;
-        case 'Sales Team Lead':
-          nav("/teamlead");
-          break;
-        case 'Sales Representative':
-          nav("/sales");
-          break;
-        default:
-          nav("/");
+      if (data) {
+        setEmail("");
+        setPassword("");
+      }
+
+      if (!data.user?.defaultPasswordChanged) {
+        nav("/change-password");
+      } else {
+        nav("/");
       }
     } catch (e) {
       console.error('Login error:', e);
