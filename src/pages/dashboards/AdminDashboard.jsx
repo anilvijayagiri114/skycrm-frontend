@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Users, Target, Briefcase, Clock, UserPlus } from "lucide-react";
 import api from "../../services/api";
@@ -20,7 +19,7 @@ export default function AdminDashboard() {
     queryFn: async () => (await api.get("/team")).data,
   });
 
-const stats = [
+  const stats = [
     {
       title: "Total Users",
       value: users.data?.length || 0,
@@ -43,126 +42,18 @@ const stats = [
     },
   ];
 
-//   return (
-//     <div>
-//       {/* Top Navbar */}
-//       <nav
-//         style={{
-//           display: "flex",
-//           gap: 20,
-//           padding: "16px 0",
-//           borderBottom: "1px solid #eee",
-//           marginBottom: 24,
-//           justifyContent: "space-between",
-//         }}
-//       >
-//         {/* <div style={{ display: "flex", gap: "20px" }}>
-//           <Link to="/admin" style={{ fontWeight: "bold", color: "#1e293b" }}>
-//             Admin Dashboard
-//           </Link>
-//           <Link to="/manager" style={{ fontWeight: "bold", color: "#10b981" }}>
-//             Manager Dashboard
-//           </Link>
-//           <Link to="/teamlead" style={{ fontWeight: "bold", color: "#f59e0b" }}>
-//             Team Lead Dashboard
-//           </Link>
-//           <Link to="/rep" style={{ fontWeight: "bold", color: "#2563eb" }}>
-//             Sales Rep Dashboard
-//           </Link>
-//         </div> */}
-//         <div style={{ display: "flex", gap: "20px" }}>
-//           <Link
-//             to="/manageUsers"
-//             style={{ fontWeight: "bold", color: "#c1097aff" }}
-//           >
-//             Manage Users
-//           </Link>
-//           <Link
-//             to="/registerUser"
-//             style={{ fontWeight: "bold", color: "#6b21a8" }}
-//           >
-//             Register New User
-//           </Link>
-//         </div>
-//       </nav>
-//       <div className="grid gap-4 md:grid-cols-2">
-//         <Card title="Users">
-//           <table className="w-full text-sm">
-//             <thead>
-//               <tr className="text-left">
-//                 <th>Name</th>
-//                 <th>Email</th>
-//                 <th>Role</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {users.data?.map((u) => (
-//                 <tr
-//                   key={u._id}
-//                   className={`${
-//                     u.status === "inactive"
-//                       ? "bg-gray-100 text-gray-500" // inactive rows styled gray
-//                       : "" // active rows just have hover effect
-//                   }`}
-//                 >
-//                   <td>{u.name}</td>
-//                   <td>{u.email}</td>
-//                   <td>{u.roleName}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </Card>
-//         <Card title="Teams">
-//           <ul className="text-sm space-y-1">
-//             {teams.data?.map((t) => (
-//               <li key={t._id}>
-//                 {t.name} — Lead: {t.lead?.name || "-"} · Members: {" "}
-//                 {t.members?.length || 0}
-//               </li>
-//             ))}
-//           </ul>
-//         </Card>
-//         <Card title="All Leads">
-//           <table className="w-full text-sm">
-//             <thead>
-//               <tr className="text-left">
-//                 <th>Name</th>
-//                 <th>Phone</th>
-//                 <th>Status</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {leads.data?.map((l) => (
-//                 <tr key={l._id}>
-//                   <td>
-//                     <Link className="text-blue-600" to={`/leads/${l._id}`}>
-//                       {l.name}
-//                     </Link>
-//                   </td>
-//                   <td>{l.phone}</td>
-//                   <td>
-//                     <StatusBadge name={l.status?.name} />
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </Card>
-//       </div>
-//     </div>
-//   );
-// }
-return (
-   
-    <div className="min-h-screen bg-gray-100 w-full p-6 overflow-x-hidden">
-
+  return (
+    <div className="min-h-screen  w-full p-6 overflow-x-hidden">
       {/* Dashboard Header */}
       <header className="mb-10">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Dashboard</h1>
-            <p className="text-gray-500">Overview of users, leads, and teams.</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+              Admin Dashboard
+            </h1>
+            <p className=" text-gray-800 dark:text-gray-300">
+              Overview of users, leads, and teams.
+            </p>
           </div>
           <div className="flex gap-4">
             <Link
@@ -188,27 +79,34 @@ return (
         {stats.map((stat) => (
           <div
             key={stat.title}
-            className="bg-white rounded-lg shadow p-5 flex items-center justify-between"
+            className="bg-white dark:bg-gray-700 rounded-lg shadow p-5 flex items-center justify-between transition-colors"
           >
             <div>
-              <p className="text-sm text-gray-500 mb-1">{stat.title}</p>
-              <p className="text-2xl font-semibold text-gray-800">{stat.value}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-300 mb-1">
+                {stat.title}
+              </p>
+              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                {stat.value}
+              </p>
             </div>
-            <div className="bg-gray-100 p-2 rounded-full">{stat.icon}</div>
+            <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded-full">
+              {stat.icon}
+            </div>
           </div>
         ))}
       </section>
 
-     
-
       {/* Content Grids */}
       <section className="grid gap-6 lg:grid-cols-3 mb-10">
         {/* Users Table */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Users</h2>
+        <div className="lg:col-span-2 bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+            Users
+          </h2>
+
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+              <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
                 <tr>
                   <th className="px-6 py-3 text-left">Name</th>
                   <th className="px-6 py-3 text-left">Email</th>
@@ -216,21 +114,32 @@ return (
                   <th className="px-6 py-3 text-left">Status</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+
+              <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
                 {users.data?.map((u) => (
-                  <tr 
+                  <tr
                     key={u._id}
-                    className={u.status === "inactive" ? "bg-gray-50" : ""}
+                    className={`transition-colors ${
+                      u.status === "inactive"
+                        ? "bg-gray-50 dark:bg-gray-800"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                    }`}
                   >
-                    <td className="px-6 py-4 font-medium text-gray-800">{u.name}</td>
-                    <td className="px-6 py-4 text-gray-600">{u.email}</td>
-                    <td className="px-6 py-4 text-gray-600">{u.roleName}</td>
+                    <td className="px-6 py-4 font-medium text-gray-800 dark:text-gray-100">
+                      {u.name}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                      {u.email}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                      {u.roleName}
+                    </td>
                     <td className="px-6 py-4">
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${
                           u.status === "inactive"
-                            ? "bg-gray-100 text-gray-600"
-                            : "bg-green-100 text-green-700"
+                            ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                            : "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200"
                         }`}
                       >
                         {u.status === "inactive" ? "Inactive" : "Active"}
@@ -244,19 +153,26 @@ return (
         </div>
 
         {/* Teams List */}
-        <div className="bg-white p-5 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Teams</h2>
+        <div className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+            Teams
+          </h2>
+
           <ul className="space-y-3">
             {teams.data?.map((team) => (
               <li
                 key={team._id}
-                className="bg-gray-50 px-4 py-3 rounded flex justify-between items-center"
+                className="bg-gray-50 dark:bg-gray-700 px-4 py-3 rounded flex justify-between items-center transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 <div>
-                  <p className="text-sm font-semibold text-gray-700">{team.name}</p>
-                  <p className="text-xs text-gray-500">Lead: {team.lead?.name || "N/A"}</p>
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-100">
+                    {team.name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Lead: {team.lead?.name || "N/A"}
+                  </p>
                 </div>
-                <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">
+                <span className="text-xs bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-200 px-2 py-1 rounded-full">
                   {team.members?.length || 0} Members
                 </span>
               </li>
@@ -266,11 +182,14 @@ return (
       </section>
 
       {/* All Leads Table */}
-      <section className="bg-white p-5 rounded-lg shadow">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">All Leads</h2>
+      <section className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          All Leads
+        </h2>
+
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+            <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
               <tr>
                 <th className="px-6 py-3 text-left">Name</th>
                 <th className="px-6 py-3 text-left">Phone</th>
@@ -278,20 +197,31 @@ return (
                 <th className="px-6 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+
+            <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
               {leads.data?.map((lead) => (
-                <tr key={lead._id}>
-                  <td className="px-6 py-4 text-blue-600 hover:underline">
-                    <Link to={`/leads/${lead._id}`}>{lead.name}</Link>
+                <tr
+                  key={lead._id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <td className="px-6 py-4">
+                    <Link
+                      to={`/leads/${lead._id}`}
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      {lead.name}
+                    </Link>
                   </td>
-                  <td className="px-6 py-4 text-gray-600">{lead.phone}</td>
+                  <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
+                    {lead.phone}
+                  </td>
                   <td className="px-6 py-4">
                     <StatusBadge name={lead.status?.name} />
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Link
                       to={`/leads/${lead._id}/edit`}
-                      className="text-indigo-600 hover:text-indigo-800"
+                      className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
                     >
                       Edit
                     </Link>
@@ -303,6 +233,5 @@ return (
         </div>
       </section>
     </div>
-    
   );
 }

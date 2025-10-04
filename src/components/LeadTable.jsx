@@ -1,5 +1,5 @@
 export default function LeadTable({ leads, onOpen, onDelete, hideAction, statuses, onStatusChange }) {
-  // Sort leads by createdAt descending (newest first)
+
   const sortedLeads = [...(leads || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   return (
     <table className="w-full text-sm">

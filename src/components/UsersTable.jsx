@@ -39,12 +39,12 @@ export default function UsersTable({ usersData }) {
     setTableData(newData);
   };
 
-  const handleUserDeleted=(deletedUser)=>{
-    const newData = tableData.filter((u)=>{
-      return u._id !== deletedUser._id
+  const handleUserDeleted = (deletedUser) => {
+    const newData = tableData.filter((u) => {
+      return u._id !== deletedUser._id;
     });
     setTableData(newData);
-  }
+  };
 
   return (
     <>
@@ -62,7 +62,10 @@ export default function UsersTable({ usersData }) {
           </thead>
           <tbody>
             {tableData.map((user) => (
-              <tr key={user._id} className="hover:bg-gray-50">
+              <tr
+                key={user._id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
                 <td className="px-4 py-2 border">{user.name}</td>
                 <td className="px-4 py-2 border">{user.email}</td>
                 <td className="px-4 py-2 border">{user.roleName}</td>

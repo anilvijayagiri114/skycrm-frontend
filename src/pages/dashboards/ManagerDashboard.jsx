@@ -52,7 +52,7 @@ export default function ManagerDashboard() {
     y: 0,
   });
   const [cityGeo, setCityGeo] = useState({});
-  
+
   // { cityKey: { lon, lat, country } }
   // Lead assignment states
   const [showUnassignedLeads, setShowUnassignedLeads] = useState(false);
@@ -95,16 +95,16 @@ export default function ManagerDashboard() {
     queryKey: ["leads", "unassigned"],
     queryFn: async () => {
       const response = await api.get("/leads");
-      console.log("respose",response);
-      return response.data.filter(lead => !lead.assignedTo || !lead.teamId);
+      console.log("respose", response);
+      return response.data.filter((lead) => !lead.assignedTo || !lead.teamId);
     },
-    enabled: showUnassignedLeads
+    enabled: showUnassignedLeads,
   });
   useEffect(() => {
-  if (showUnassignedLeads) {
-    unassignedLeadsQuery.refetch();
-  }
-},);
+    if (showUnassignedLeads) {
+      unassignedLeadsQuery.refetch();
+    }
+  });
   // console.log("Unassigned Leads",unassignedLeadsQuery.data);;
 
   // Lead creation mutation
@@ -143,9 +143,10 @@ export default function ManagerDashboard() {
   const handleStatusChange = (id, statusName) => {
     statusMutation.mutate({ id, statusName });
   };
-// Bulk assignment mutation
-const bulkAssignMutation = useMutation({
-    mutationFn: async (payload) => (await api.post("/leads/bulk-assign", payload)).data,
+  // Bulk assignment mutation
+  const bulkAssignMutation = useMutation({
+    mutationFn: async (payload) =>
+      (await api.post("/leads/bulk-assign", payload)).data,
     onSuccess: (data) => {
       setSuccessMsg(data.message || "Leads assigned successfully!");
       setSelectedLeads([]);
@@ -159,7 +160,7 @@ const bulkAssignMutation = useMutation({
     onError: (error) => {
       alert(error.response?.data?.error || "Failed to assign leads");
       setIsAssigning(false);
-    }
+    },
   });
 
   // Lead assignment handlers
@@ -190,16 +191,13 @@ const bulkAssignMutation = useMutation({
     setIsAssigning(true);
     bulkAssignMutation.mutate({
       leadIds: selectedLeads,
-      teamId: teamId
+      teamId: teamId,
     });
   };
-
 
   const handleTeamAdded = () => {
     setShowAddTeam(false);
   };
-
-  
 
   const deleteMutation = useMutation({
     mutationFn: async (team) => await api.delete(`/team/${team._id}`),
@@ -295,21 +293,7 @@ const bulkAssignMutation = useMutation({
   }, [leadsQuery.data]);
 
   return (
-    // <div style={{ display: "flex", minHeight: "80vh" }}>
-    //   <aside
-    //     style={{
-    //       width: 140,
-    //       background: "#f8fafc",
-    //       borderRight: "1px solid #eee",
-    //       padding: 16,
-    //       display: "flex",
-    //       flexDirection: "column",
-    //       gap: 18,
-    //       justifyContent: "center",
-    //       height: "100%",
-    //     }}
-    //   >
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 w-full p-6 overflow-x-hidden transition-colors duration-200">
+    <div className="min-h-screen  dark:bg-gray-800 w-full p-6 overflow-x-hidden transition-colors duration-200">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
         Manager Dashboard
       </h1>
@@ -409,9 +393,15 @@ const bulkAssignMutation = useMutation({
                   let d = l.createdAt ? new Date(l.createdAt) : null;
                   d = normalizeDate(d);
                   if (timeRange === "Custom" && endDate) {
-                    return d && d >= normalizeDate(cutoff) && d <= normalizeDate(new Date(endDate));
+                    return (
+                      d &&
+                      d >= normalizeDate(cutoff) &&
+                      d <= normalizeDate(new Date(endDate))
+                    );
                   }
-                  return d && d >= normalizeDate(cutoff) && d <= normalizeDate(now);
+                  return (
+                    d && d >= normalizeDate(cutoff) && d <= normalizeDate(now)
+                  );
                 });
                 const normalize = (s) =>
                   (s || "")
@@ -585,7 +575,8 @@ const bulkAssignMutation = useMutation({
                     }}
                   >
                     {/* Top Stats + Time Range Filter */}
-                    <div style={{ gridColumn: "1 / -1", marginBottom: 4 }}>
+                    <div style={{ gridColumn: "1 / -1", marginBottom: 16 }}>
+                      {/* Header */}
                       <div
                         style={{
                           display: "flex",
@@ -596,7 +587,19 @@ const bulkAssignMutation = useMutation({
                           marginBottom: 10,
                         }}
                       >
-                        <div style={{ fontWeight: "bold" }}>Lead Stats</div>
+                        <div
+                          style={{
+                            fontWeight: "bold",
+                            fontSize: 16,
+                            color: "#f9fafb",
+                          }}
+                        >
+                          {" "}
+                          {/* White for dark */}
+                          Lead Stats
+                        </div>
+
+                        {/* Remaining + Time Range Buttons */}
                         <div
                           style={{
                             display: "flex",
@@ -604,13 +607,13 @@ const bulkAssignMutation = useMutation({
                             gap: 10,
                           }}
                         >
+                          {/* Remaining Circle */}
                           <div
                             style={{
                               display: "flex",
                               alignItems: "center",
                               gap: 8,
-                              background: "#ffffff",
-                              border: "1px solid #e5e7eb",
+                              border: "1px solid #4b5563", 
                               borderRadius: 10,
                               padding: "4px 8px",
                             }}
@@ -632,7 +635,7 @@ const bulkAssignMutation = useMutation({
                                       cx="12"
                                       cy="12"
                                       r={r}
-                                      stroke="#e5e7eb"
+                                      stroke="#4b5563" // gray-600
                                       strokeWidth="4"
                                       fill="none"
                                     />
@@ -655,23 +658,27 @@ const bulkAssignMutation = useMutation({
                                 );
                               })()}
                             </svg>
-                            <div style={{ fontSize: 12, color: "#6b7280" }}>
+                            <div style={{ fontSize: 12, color: "#d1d5db" }}>
+                              {" "}
+                              {/* gray-300 */}
                               Remaining:{" "}
                               <span
-                                style={{ color: "#111827", fontWeight: 600 }}
+                                style={{ color: "#f9fafb", fontWeight: 600 }}
                               >
                                 {remainingPct}%
                               </span>
                             </div>
                           </div>
+
+                          {/* Time Range Buttons */}
                           <div
                             style={{
                               display: "flex",
                               gap: 8,
-                              background: "#f9fafb",
+                              background: "#374151", // gray-700
                               padding: 4,
                               borderRadius: 10,
-                              border: "1px solid #e5e7eb",
+                              border: "1px solid #4b5563", // gray-600
                             }}
                           >
                             {["Day", "Week", "Month", "Year", "Custom"].map(
@@ -680,21 +687,20 @@ const bulkAssignMutation = useMutation({
                                   key={r}
                                   onClick={() => {
                                     setTimeRange(r);
-                                    if (r === "Custom") {
+                                    if (r === "Custom")
                                       setShowCustomDateRange(true);
-                                    }
                                   }}
                                   style={{
                                     padding: "6px 12px",
-                                    border:
-                                      "1px solid " +
-                                      (timeRange === r
+                                    border: `1px solid ${
+                                      timeRange === r
                                         ? "#6366f1"
-                                        : "transparent"),
+                                        : "transparent"
+                                    }`,
                                     background:
-                                      timeRange === r ? "#6366f1" : "#ffffff",
+                                      timeRange === r ? "#6366f1" : "#374151", // active purple, inactive gray-700
                                     color:
-                                      timeRange === r ? "#ffffff" : "#111827",
+                                      timeRange === r ? "#ffffff" : "#f9fafb", // white text
                                     borderRadius: 8,
                                     cursor: "pointer",
                                     fontSize: 13,
@@ -711,6 +717,8 @@ const bulkAssignMutation = useMutation({
                           </div>
                         </div>
                       </div>
+
+                      {/* Stat Cards */}
                       <div
                         style={{
                           display: "grid",
@@ -723,8 +731,8 @@ const bulkAssignMutation = useMutation({
                           <div
                             key={s.key}
                             style={{
-                              background: "#fff",
-                              border: "1px solid #eee",
+                              background: "#374151", // gray-700
+                              border: "1px solid #4b5563", // gray-600
                               borderRadius: 12,
                               padding: 12,
                               display: "flex",
@@ -732,9 +740,10 @@ const bulkAssignMutation = useMutation({
                               gap: 6,
                             }}
                           >
-                            <div style={{ fontSize: 12, color: "#6b7280" }}>
+                            <div style={{ fontSize: 12, color: "#d1d5db" }}>
                               {s.label}
-                            </div>
+                            </div>{" "}
+                            {/* gray-300 */}
                             <div
                               style={{
                                 fontWeight: "bold",
@@ -1622,160 +1631,89 @@ const bulkAssignMutation = useMutation({
           </Card>
         )}
         {activeTab === "teams" && (
-          // <Card
-          //   title="My Teams"
-          //   actions={
-          //     <button
-          //       className="bg-blue-600 text-white px-3 py-1 rounded"
-          //       onClick={() => handleAddTeam()}
-          //     >               
-          //      + Add Team
-          //     </button>
-          //   }
-          // >
-          //   <ul className="text-sm space-y-1">
-          //     {teams.data?.map((t) => (
-          //       <li key={t._id}>
-          //         <div
-          //           style={{
-          //             display: "flex",
-          //             justifyContent: "space-between",
-          //             alignItems: "center",
-          //           }}
-          //         >
-          //           {/* Left side content */}
-          //           <div>
-          //             <strong>{t.name}</strong> — Lead: {t.lead?.name || "-"} ·
-          //             Members: {t.members?.length || 0}
-          //           </div>
-
-          //           {/* Right side buttons */}
-          //           <div style={{ display: "flex", gap: "12px" }}>
-          //             <button
-          //               className="text-blue-500 underline hover:text-blue-700"
-          //               onClick={() => handleTeamEdit(t)}
-          //             >
-          //               Edit Team
-          //             </button>
-          //             <button
-          //               className="text-red-500 underline hover:text-red-700"
-          //               onClick={() => handleTeamDelete(t)}
-          //             >
-          //               Delete Team
-          //             </button>
-
-          //             {t.lead !== undefined && (
-          //               <button
-          //                 className="bg-violet-500 text-white px-3 py-1 rounded"
-          //                 onClick={() => {
-          //                   setShowTeamLeadModal(true);
-          //                   setTeamData(t);
-          //                   setCurrentLeadId(t.lead);
-          //                 }}
-          //               >
-          //                 Change Lead
-          //               </button>
-          //             )}
-          //             {t.lead === undefined && (
-          //               <button
-          //                 className="bg-green-500 text-white px-3 py-1 rounded"
-          //                 onClick={() => {
-          //                   setShowTeamLeadModal(true);
-          //                   setTeamData(t);
-          //                 }}
-          //               >
-          //                 Set Team Lead
-          //               </button>
-          //             )}
-          //           </div>
-          //         </div>
-
-          //         {/* Members row */}
-          //         <div style={{ marginLeft: 16, fontSize: 13, color: "#555" }}>
-          //           Members: {t.members?.map((m) => m.name).join(", ") || "-"}
-          //         </div>
-          //       </li>
-          //     ))}
-          //   </ul>
-          // </Card>
           <Card
-  title="My Teams"
-  actions={
-    <button
-      className="bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-md shadow-md flex items-center gap-2"
-      onClick={() => handleAddTeam()}
-    >
-      <span>+</span> Add Team
-    </button>
-  }
->
-  <ul className="space-y-4">
-    {teams.data?.map((t) => (
-      <li
-        key={t._id}
-        className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
-      >
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          {/* Left: Team Info */}
-          <div className="space-y-1">
-            <h3 className="text-lg font-semibold text-gray-900">{t.name}</h3>
-            <p className="text-sm text-gray-600">
-              Lead:{" "}
-              <span className="font-medium text-indigo-600">
-                {t.lead?.name || "Not assigned"}
-              </span>{" "}
-              · Members:{" "}
-              <span className="font-medium">{t.members?.length || 0}</span>
-            </p>
-            <p className="text-xs text-gray-500 truncate max-w-sm md:max-w-md">
-              Members List:{" "}
-              {t.members?.map((m) => m.name).join(", ") || "No members"}
-            </p>
-          </div>
-
-          {/* Right: Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              className="text-blue-500 hover:text-blue-700 transition px-3 py-1 rounded-md hover:bg-blue-50"
-              onClick={() => handleTeamEdit(t)}
-            >
-              Edit Team
-            </button>
-            <button
-              className="text-red-500 hover:text-red-700 transition px-3 py-1 rounded-md hover:bg-red-50"
-              onClick={() => handleTeamDelete(t)}
-            >
-              Delete Team
-            </button>
-
-            {t.lead !== undefined ? (
+            title="My Teams"
+            actions={
               <button
-                className="bg-violet-500 hover:bg-violet-600 transition text-white px-4 py-2 rounded-md shadow"
-                onClick={() => {
-                  setShowTeamLeadModal(true);
-                  setTeamData(t);
-                  setCurrentLeadId(t.lead);
-                }}
+                className="bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-md shadow-md flex items-center gap-2"
+                onClick={() => handleAddTeam()}
               >
-                Change Lead
+                <span>+</span> Add Team
               </button>
-            ) : (
-              <button
-                className="bg-green-500 hover:bg-green-600 transition text-white px-4 py-2 rounded-md shadow"
-                onClick={() => {
-                  setShowTeamLeadModal(true);
-                  setTeamData(t);
-                }}
-              >
-                Set Team Lead
-              </button>
-            )}
-          </div>
-        </div>
-      </li>
-    ))}
-  </ul>
-</Card>
+            }
+          >
+            <ul className="space-y-4">
+              {teams.data?.map((t) => (
+                <li
+                  key={t._id}
+                  className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    {/* Left: Team Info */}
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {t.name}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Lead:{" "}
+                        <span className="font-medium text-indigo-600">
+                          {t.lead?.name || "Not assigned"}
+                        </span>{" "}
+                        · Members:{" "}
+                        <span className="font-medium">
+                          {t.members?.length || 0}
+                        </span>
+                      </p>
+                      <p className="text-xs text-gray-500 truncate max-w-sm md:max-w-md">
+                        Members List:{" "}
+                        {t.members?.map((m) => m.name).join(", ") ||
+                          "No members"}
+                      </p>
+                    </div>
+
+                    {/* Right: Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        className="text-blue-500 hover:text-blue-700 transition px-3 py-1 rounded-md hover:bg-blue-50"
+                        onClick={() => handleTeamEdit(t)}
+                      >
+                        Edit Team
+                      </button>
+                      <button
+                        className="text-red-500 hover:text-red-700 transition px-3 py-1 rounded-md hover:bg-red-50"
+                        onClick={() => handleTeamDelete(t)}
+                      >
+                        Delete Team
+                      </button>
+
+                      {t.lead !== undefined ? (
+                        <button
+                          className="bg-violet-500 hover:bg-violet-600 transition text-white px-4 py-2 rounded-md shadow"
+                          onClick={() => {
+                            setShowTeamLeadModal(true);
+                            setTeamData(t);
+                            setCurrentLeadId(t.lead);
+                          }}
+                        >
+                          Change Lead
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-green-500 hover:bg-green-600 transition text-white px-4 py-2 rounded-md shadow"
+                          onClick={() => {
+                            setShowTeamLeadModal(true);
+                            setTeamData(t);
+                          }}
+                        >
+                          Set Team Lead
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Card>
         )}
         {activeTab === "data" && (
           <Card title="All Leads" style={{ marginLeft: 0, paddingLeft: 0 }}>
@@ -2064,52 +2002,75 @@ const bulkAssignMutation = useMutation({
               </button>
             </div>
             <div>
-            <button
-                 type="button"
-                 onClick={handleUnassignedLeadsClick}
-                 aria-pressed={showUnassignedLeads}
-                 className={`px-2.5 py-1.5 text-sm font-semibold rounded-md mx-2 my-2 transition-colors duration-150 focus:outline-none ${
-                 showUnassignedLeads
-                 ? "bg-white text-yellow-500 border border-yellow-400"
-                 : "bg-red-600 text-white border border-red-600"
-              }`}
-            >
-            {showUnassignedLeads ? "Show All Leads" : `Show Unassigned Leads ${unassignedLeadsQuery.data ? `(${unassignedLeadsQuery.data.length})` : ''}`}
-           </button>
-
+              <button
+                type="button"
+                onClick={handleUnassignedLeadsClick}
+                aria-pressed={showUnassignedLeads}
+                className={`px-2.5 py-1.5 text-sm font-semibold rounded-md mx-2 my-2 transition-colors duration-150 focus:outline-none ${
+                  showUnassignedLeads
+                    ? "bg-white text-yellow-500 border border-yellow-400"
+                    : "bg-red-600 text-white border border-red-600"
+                }`}
+              >
+                {showUnassignedLeads
+                  ? "Show All Leads"
+                  : `Show Unassigned Leads ${
+                      unassignedLeadsQuery.data
+                        ? `(${unassignedLeadsQuery.data.length})`
+                        : ""
+                    }`}
+              </button>
             </div>
 
             {/* Lead Assignment Controls */}
             {showUnassignedLeads && (
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                marginBottom: '20px',
-                padding: '15px',
-                background: '#f8fafc',
-                borderRadius: '8px',
-                border: '1px solid #e2e8f0'
-              }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                  padding: "15px",
+                  background: "#f8fafc",
+                  borderRadius: "8px",
+                  border: "1px solid #e2e8f0",
+                }}
+              >
                 <div>
-                  <h3 style={{ margin: 0, color: '#374151', fontSize: '16px', fontWeight: 'bold' }}>
+                  <h3
+                    style={{
+                      margin: 0,
+                      color: "#374151",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                    }}
+                  >
                     Select leads to assign to teams
                   </h3>
-                  <p style={{ margin: '5px 0 0 0', color: '#6b7280', fontSize: '14px' }}>
-                    {selectedLeads.length > 0 
-                      ? `${selectedLeads.length} lead${selectedLeads.length !== 1 ? 's' : ''} selected`
-                      : 'No leads selected'
-                    }
+                  <p
+                    style={{
+                      margin: "5px 0 0 0",
+                      color: "#6b7280",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {selectedLeads.length > 0
+                      ? `${selectedLeads.length} lead${
+                          selectedLeads.length !== 1 ? "s" : ""
+                        } selected`
+                      : "No leads selected"}
                   </p>
                 </div>
                 <button
                   style={{
                     padding: "10px 20px",
-                    background: selectedLeads.length > 0 ? "#10b981" : "#9ca3af",
+                    background:
+                      selectedLeads.length > 0 ? "#10b981" : "#9ca3af",
                     color: "white",
                     border: "none",
                     borderRadius: 8,
-                    cursor: selectedLeads.length > 0 ? "pointer" : "not-allowed",
+                    cursor:
+                      selectedLeads.length > 0 ? "pointer" : "not-allowed",
                     fontWeight: "bold",
                     fontSize: 14,
                     opacity: selectedLeads.length > 0 ? 1 : 0.6,
@@ -2121,7 +2082,7 @@ const bulkAssignMutation = useMutation({
                 </button>
               </div>
             )}
-            
+
             {/* Table */}
             <div style={{ width: "100%", overflowX: "auto" }}>
               <div
@@ -2150,18 +2111,16 @@ const bulkAssignMutation = useMutation({
                       onSelectAll={handleSelectAllLeads}
                     />
                   )
+                ) : leadsQuery.isLoading ? (
+                  <p>Loading...</p>
                 ) : (
-                  leadsQuery.isLoading ? (
-                    <p>Loading...</p>
-                  ) : (
-                    <LeadTable
-                      leads={leadsQuery.data}
-                      onOpen={onOpen}
-                      onDelete={handleDelete}
-                      statuses={statusesQuery.data}
-                      onStatusChange={handleStatusChange}
-                    />
-                  )
+                  <LeadTable
+                    leads={leadsQuery.data}
+                    onOpen={onOpen}
+                    onDelete={handleDelete}
+                    statuses={statusesQuery.data}
+                    onStatusChange={handleStatusChange}
+                  />
                 )}
               </div>
             </div>

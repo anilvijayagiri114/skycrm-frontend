@@ -17,7 +17,9 @@ const ManageUsers = () => {
 
     const fetchUsers = async () => {
       try {
-        const res = await api.post("/auth/usersByRole", { roleId: selectedRoleId });
+        const res = await api.post("/auth/usersByRole", {
+          roleId: selectedRoleId,
+        });
         setUsersData(res.data);
       } catch (err) {
         console.error(err);
@@ -35,20 +37,20 @@ const ManageUsers = () => {
   }, [rolesQuery.data]);
 
   return (
-    <div className="flex flex-col items-center bg-gray-50 py-12 space-y-6">
+    <div className="flex flex-col items-center  py-12 space-y-6">
       <h1 className="text-2xl font-bold">Manage Users</h1>
 
-      <div className="bg-white p-4 rounded-2xl shadow w-full max-w-3xl">
+      <div className=" p-4 rounded-2xl  w-full max-w-3xl">
         <nav className="flex space-x-4 justify-center">
           {rolesQuery.data?.map((r) => (
             <button
               key={r._id}
-              className={`px-4 py-2 rounded-lg transition ${
-                selectedRoleId === r._id
-                  ? "bg-gray-500 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
               onClick={() => setSelectedRoleId(r._id)}
+              className={`px-4 py-2 rounded-lg transition font-medium ${
+                selectedRoleId === r._id
+                  ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-900"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+              }`}
             >
               {r.name}
             </button>
