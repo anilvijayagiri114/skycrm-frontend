@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Users, Target, Briefcase, Clock, UserPlus } from "lucide-react";
+import { Users, Target, Briefcase, Clock, UserPlus, Activity } from "lucide-react";
 import api from "../../services/api";
 import Card from "../../components/Card";
 import StatusBadge from "../../components/StatusBadge";
@@ -56,6 +56,13 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex gap-4">
+            <Link
+              to="/activityLogs"
+              className="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+            >
+              <Activity className="w-5 h-5 mr-2" />
+              Activity Logs
+            </Link>
             <Link
               to="/manageUsers"
               className="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition"
