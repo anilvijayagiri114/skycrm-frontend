@@ -37,7 +37,7 @@ export default function LeadTableWithSelection({
   return (
     <div className="w-full">
       {showSelection && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mb-4 p-3  border border-blue-200 rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <label className="flex items-center space-x-2 cursor-pointer">
@@ -48,7 +48,7 @@ export default function LeadTableWithSelection({
                     if (input) input.indeterminate = isIndeterminate;
                   }}
                   onChange={handleSelectAll}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 b border-gray-300 rounded focus:ring-blue-500"
                 />
                 <span className="text-sm font-medium text-gray-700">
                   Select All ({selectedLeads.length} selected)
@@ -66,7 +66,7 @@ export default function LeadTableWithSelection({
       
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left bg-gray-50">
+          <tr className="text-left ">
             {showSelection && <th className="w-12 px-4 py-3">Select</th>}
             <th className="px-4 py-3">Name</th>
             <th className="px-4 py-3">Email</th>
@@ -83,7 +83,7 @@ export default function LeadTableWithSelection({
           {sortedLeads.map(lead => (
             <tr 
               key={lead._id} 
-              className={`border-b hover:bg-gray-50 ${selectedLeads.includes(lead._id) ? 'bg-blue-50' : ''}`}
+              className={`border-b hover:bg-gray-50 text-gray-700 hover:text-black dark:text-gray-200 dark:hover:bg-gray-800 transition ${selectedLeads.includes(lead._id) ? 'bg-blue-50' : ''}`}
             >
               {showSelection && (
                 <td className="px-4 py-3">
@@ -91,7 +91,7 @@ export default function LeadTableWithSelection({
                     type="checkbox"
                     checked={selectedLeads.includes(lead._id)}
                     onChange={() => handleSelectLead(lead._id)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 bg-gray-600 border-gray-300 rounded focus:ring-blue-500"
                   />
                 </td>
               )}

@@ -613,7 +613,7 @@ export default function ManagerDashboard() {
                               display: "flex",
                               alignItems: "center",
                               gap: 8,
-                              border: "1px solid #4b5563", 
+                              border: "1px solid #4b5563",
                               borderRadius: 10,
                               padding: "4px 8px",
                             }}
@@ -759,8 +759,8 @@ export default function ManagerDashboard() {
                     </div>
 
                     {/* Source Performance Cards */}
-                    <div style={{ gridColumn: "1 / -1" }}>
-                      <div style={{ fontWeight: "bold", margin: "8px 0" }}>
+                    <div className="col-span-full">
+                      <div className="font-bold text-gray-800 dark:text-gray-100 mb-2 text-lg">
                         Lead Sources Performance
                       </div>
                       {(() => {
@@ -804,23 +804,16 @@ export default function ManagerDashboard() {
                             ads: "https://logo.clearbit.com/google.com",
                             insta: "https://logo.clearbit.com/instagram.com",
                           };
-                          // Try exact, then includes match
                           if (logos[k]) return logos[k];
                           const hit = Object.keys(logos).find((key) =>
                             k.includes(key)
                           );
                           return hit ? logos[hit] : "";
                         };
-                        const circumference = 2 * Math.PI * 36; // r=36
+                        const circumference = 2 * Math.PI * 36;
+
                         return (
-                          <div
-                            style={{
-                              display: "grid",
-                              gridTemplateColumns:
-                                "repeat(auto-fit, minmax(260px, 1fr))",
-                              gap: 12,
-                            }}
-                          >
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {entries.map((src) => {
                               const rate =
                                 src.total > 0
@@ -828,102 +821,56 @@ export default function ManagerDashboard() {
                                   : 0;
                               const offset = circumference * (1 - rate / 100);
                               const logo = logoFor(src.name);
+
                               return (
                                 <div
                                   key={src.name}
-                                  style={{
-                                    background: "#fff",
-                                    border: "1px solid #eee",
-                                    borderRadius: 12,
-                                    padding: 12,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 12,
-                                  }}
+                                  className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col md:flex-row items-center gap-4 shadow hover:shadow-md transition"
                                 >
-                                  <div
-                                    style={{
-                                      width: 44,
-                                      height: 44,
-                                      borderRadius: 8,
-                                      background: "#f3f4f6",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      overflow: "hidden",
-                                    }}
-                                  >
+                                  <div className="w-12 h-12 rounded-lg  flex items-center justify-center overflow-hidden">
                                     {logo ? (
                                       <img
                                         src={logo}
                                         alt={src.name}
-                                        style={{
-                                          width: "100%",
-                                          height: "100%",
-                                          objectFit: "cover",
-                                        }}
+                                        className="w-full h-full object-cover"
                                       />
                                     ) : (
                                       <svg
                                         viewBox="0 0 24 24"
-                                        width="24"
-                                        height="24"
-                                        fill="#6b7280"
-                                        aria-hidden
+                                        className="w-6 h-6 text-gray-400"
+                                        fill="currentColor"
                                       >
                                         <path d="M12 2a7 7 0 0 0-7 7v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V9a7 7 0 0 0-7-7zm0 2a5 5 0 0 1 5 5v1H7V9a5 5 0 0 1 5-5zm-3 9h6a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2z" />
                                       </svg>
                                     )}
                                   </div>
-                                  <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: "bold" }}>
+
+                                  <div className="flex-1 w-full">
+                                    <div className="font-semibold text-gray-800 dark:text-gray-100">
                                       {src.name}
                                     </div>
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        gap: 12,
-                                        marginTop: 6,
-                                        color: "#6b7280",
-                                        fontSize: 13,
-                                      }}
-                                    >
+                                    <div className="flex gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
                                       <div>
                                         Total:{" "}
-                                        <span
-                                          style={{
-                                            color: "#111827",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
+                                        <span className="text-gray-900 dark:text-gray-200 font-bold">
                                           {src.total}
                                         </span>
                                       </div>
                                       <div>
                                         Enrolled:{" "}
-                                        <span
-                                          style={{
-                                            color: "#0EA5E9",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
+                                        <span className="text-green-500 font-bold">
                                           {src.enrolled}
                                         </span>
                                       </div>
                                     </div>
                                   </div>
-                                  <div
-                                    style={{
-                                      width: 86,
-                                      height: 86,
-                                      position: "relative",
-                                    }}
-                                  >
+
+                                  <div className="w-20 h-20 relative flex-shrink-0">
                                     <svg
-                                      width="86"
-                                      height="86"
+                                      width="80"
+                                      height="80"
                                       viewBox="0 0 100 100"
-                                      style={{ transform: "rotate(-90deg)" }}
+                                      className="transform -rotate-90"
                                     >
                                       <circle
                                         cx="50"
@@ -943,24 +890,10 @@ export default function ManagerDashboard() {
                                         strokeDasharray={circumference}
                                         strokeDashoffset={offset}
                                         strokeLinecap="round"
-                                        style={{
-                                          transition:
-                                            "stroke-dashoffset 800ms ease",
-                                        }}
+                                        className="transition-all duration-700"
                                       />
                                     </svg>
-                                    <div
-                                      style={{
-                                        position: "absolute",
-                                        inset: 0,
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontWeight: "bold",
-                                        fontSize: 14,
-                                        color: "#111827",
-                                      }}
-                                    >
+                                    <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-gray-900 dark:text-gray-100">
                                       {rate}%
                                     </div>
                                   </div>
@@ -972,15 +905,14 @@ export default function ManagerDashboard() {
                       })()}
                     </div>
 
-                    {/* {progress bars for statuses} */}
-
                     {/* Team-level Stats (filtered by timeRange) */}
-                    <div style={{ gridColumn: "1 / -1" }}>
-                      <div style={{ fontWeight: "bold", margin: "8px 0" }}>
+                    <div className="col-span-full">
+                      <div className="font-bold text-gray-800 dark:text-gray-100 mb-2 text-lg">
                         Team Performance Overview
                       </div>
+
                       {(() => {
-                        // Mock team data - replace with actual data when available
+                        // Mock team data
                         const teamStats = [
                           {
                             name: "Alpha Team",
@@ -1027,14 +959,7 @@ export default function ManagerDashboard() {
                         ];
 
                         return (
-                          <div
-                            style={{
-                              display: "grid",
-                              gridTemplateColumns:
-                                "repeat(auto-fit, minmax(280px, 1fr))",
-                              gap: 16,
-                            }}
-                          >
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {teamStats.map((team) => {
                               const successRate =
                                 team.leads > 0
@@ -1053,7 +978,6 @@ export default function ManagerDashboard() {
                                     )
                                   : 0;
 
-                              // Pie chart data for success vs failure (excluding processing)
                               const completedLeads = team.success + team.failed;
                               const pieData =
                                 completedLeads > 0
@@ -1074,135 +998,48 @@ export default function ManagerDashboard() {
                               return (
                                 <div
                                   key={team.name}
-                                  style={{
-                                    background: "#fff",
-                                    border: "1px solid #eee",
-                                    borderRadius: 12,
-                                    padding: 16,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    gap: 12,
-                                  }}
+                                  className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-4 shadow hover:shadow-lg transition"
                                 >
                                   {/* Team Name */}
-                                  <div
-                                    style={{
-                                      fontWeight: "bold",
-                                      fontSize: 16,
-                                      color: "#111827",
-                                    }}
-                                  >
+                                  <div className="font-semibold text-gray-800 dark:text-gray-100 text-lg">
                                     {team.name}
                                   </div>
 
                                   {/* Stats Grid */}
-                                  <div
-                                    style={{
-                                      display: "grid",
-                                      gridTemplateColumns: "1fr 1fr",
-                                      gap: 12,
-                                    }}
-                                  >
-                                    {/* Left Column - Text Stats */}
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        gap: 8,
-                                      }}
-                                    >
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          fontSize: 14,
-                                        }}
-                                      >
-                                        <span style={{ color: "#6b7280" }}>
-                                          Leads:
-                                        </span>
-                                        <span
-                                          style={{
-                                            fontWeight: "bold",
-                                            color: "#111827",
-                                          }}
-                                        >
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                                    {/* Left Column - Stats */}
+                                    <div className="flex flex-col gap-2 text-sm">
+                                      <div className="flex justify-between text-gray-500 dark:text-gray-400">
+                                        <span>Leads:</span>
+                                        <span className="font-bold text-gray-900 dark:text-gray-100">
                                           {team.leads}
                                         </span>
                                       </div>
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          fontSize: 14,
-                                        }}
-                                      >
-                                        <span style={{ color: "#6b7280" }}>
-                                          Processing:
-                                        </span>
-                                        <span
-                                          style={{
-                                            fontWeight: "bold",
-                                            color: "#f59e0b",
-                                          }}
-                                        >
+                                      <div className="flex justify-between text-gray-500 dark:text-gray-400">
+                                        <span>Processing:</span>
+                                        <span className="font-bold text-yellow-500">
                                           {team.processing}
                                         </span>
                                       </div>
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          fontSize: 14,
-                                        }}
-                                      >
-                                        <span style={{ color: "#6b7280" }}>
-                                          Success:
-                                        </span>
-                                        <span
-                                          style={{
-                                            fontWeight: "bold",
-                                            color: "#22c55e",
-                                          }}
-                                        >
+                                      <div className="flex justify-between text-gray-500 dark:text-gray-400">
+                                        <span>Success:</span>
+                                        <span className="font-bold text-green-400">
                                           {team.success}
                                         </span>
                                       </div>
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          fontSize: 14,
-                                        }}
-                                      >
-                                        <span style={{ color: "#6b7280" }}>
-                                          Failed:
-                                        </span>
-                                        <span
-                                          style={{
-                                            fontWeight: "bold",
-                                            color: "#ef4444",
-                                          }}
-                                        >
+                                      <div className="flex justify-between text-gray-500 dark:text-gray-400">
+                                        <span>Failed:</span>
+                                        <span className="font-bold text-red-800">
                                           {team.failed}
                                         </span>
                                       </div>
                                     </div>
 
                                     {/* Right Column - Pie Chart */}
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                      }}
-                                    >
+                                    <div className="flex flex-col items-center justify-center">
                                       {pieData.length > 0 ? (
                                         <>
-                                          <div
-                                            style={{ width: 80, height: 80 }}
-                                          >
+                                          <div className="w-20 h-20">
                                             <ResponsiveContainer>
                                               <PieChart>
                                                 <Pie
@@ -1213,49 +1050,30 @@ export default function ManagerDashboard() {
                                                   outerRadius={35}
                                                   paddingAngle={2}
                                                 >
-                                                  {pieData.map(
-                                                    (entry, index) => (
-                                                      <Cell
-                                                        key={`cell-${entry.name}`}
-                                                        fill={entry.color}
-                                                      />
-                                                    )
-                                                  )}
+                                                  {pieData.map((entry) => (
+                                                    <Cell
+                                                      key={entry.name}
+                                                      fill={entry.color}
+                                                    />
+                                                  ))}
                                                 </Pie>
                                               </PieChart>
                                             </ResponsiveContainer>
                                           </div>
-
                                           {/* Legend */}
-                                          <div
-                                            style={{
-                                              display: "flex",
-                                              flexDirection: "column",
-                                              gap: 4,
-                                              marginTop: 8,
-                                            }}
-                                          >
+                                          <div className="flex flex-col gap-1 mt-2 text-xs">
                                             {pieData.map((item) => (
                                               <div
                                                 key={item.name}
-                                                style={{
-                                                  display: "flex",
-                                                  alignItems: "center",
-                                                  gap: 6,
-                                                  fontSize: 12,
-                                                }}
+                                                className="flex items-center gap-2 text-gray-500 dark:text-gray-400"
                                               >
-                                                <div
+                                                <span
+                                                  className="w-2 h-2 rounded-full"
                                                   style={{
-                                                    width: 8,
-                                                    height: 8,
-                                                    borderRadius: "50%",
                                                     backgroundColor: item.color,
                                                   }}
-                                                ></div>
-                                                <span
-                                                  style={{ color: "#6b7280" }}
-                                                >
+                                                ></span>
+                                                <span>
                                                   {item.name}: {item.value}
                                                 </span>
                                               </div>
@@ -1263,19 +1081,7 @@ export default function ManagerDashboard() {
                                           </div>
                                         </>
                                       ) : (
-                                        <div
-                                          style={{
-                                            width: 80,
-                                            height: 80,
-                                            borderRadius: "50%",
-                                            backgroundColor: "#f3f4f6",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            color: "#9ca3af",
-                                            fontSize: 12,
-                                          }}
-                                        >
+                                        <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-400 text-xs">
                                           No Data
                                         </div>
                                       )}
@@ -1283,23 +1089,8 @@ export default function ManagerDashboard() {
                                   </div>
 
                                   {/* Success Rate Badge */}
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      padding: "6px 12px",
-                                      backgroundColor: "#f0f9ff",
-                                      borderRadius: 8,
-                                      border: "1px solid #e0f2fe",
-                                    }}
-                                  >
-                                    <span
-                                      style={{
-                                        fontSize: 12,
-                                        color: "#0369a1",
-                                        fontWeight: "bold",
-                                      }}
-                                    >
+                                  <div className="flex justify-center py-1 px-3 bg-blue-50 dark:bg-blue-900 border border-blue-100 dark:border-blue-800 rounded-lg">
+                                    <span className="text-blue-700 dark:text-blue-300 text-sm font-bold">
                                       Success Rate: {successRate}%
                                     </span>
                                   </div>
@@ -1312,18 +1103,14 @@ export default function ManagerDashboard() {
                     </div>
 
                     {/* Pie/Doughnut */}
-                    <div
-                      style={{
-                        background: "#fff",
-                        border: "1px solid #eee",
-                        borderRadius: 10,
-                        padding: 12,
-                      }}
-                    >
-                      <div style={{ fontWeight: "bold", marginBottom: 8 }}>
+                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow">
+                      {/* Card Title */}
+                      <div className="font-bold text-gray-800 dark:text-gray-100 mb-2 text-lg">
                         Lead Sources Share
                       </div>
-                      <div style={{ width: "100%", height: 260 }}>
+
+                      {/* Pie Chart */}
+                      <div className="w-full h-64">
                         <ResponsiveContainer>
                           <PieChart>
                             <Pie
@@ -1333,6 +1120,7 @@ export default function ManagerDashboard() {
                               innerRadius={60}
                               outerRadius={90}
                               paddingAngle={2}
+                             
                             >
                               {pieData.map((entry, index) => (
                                 <Cell
@@ -1341,7 +1129,9 @@ export default function ManagerDashboard() {
                                 />
                               ))}
                             </Pie>
-                            <ReTooltip formatter={(v, n) => [v, n]} />
+                            <ReTooltip 
+                              formatter={(value, name) => [value, name]}
+                            />
                             <ReLegend verticalAlign="bottom" height={24} />
                           </PieChart>
                         </ResponsiveContainer>
@@ -1349,28 +1139,27 @@ export default function ManagerDashboard() {
                     </div>
 
                     {/* Stacked Bar by Month */}
-                    <div
-                      style={{
-                        background: "#fff",
-                        border: "1px solid #eee",
-                        borderRadius: 10,
-                        padding: 12,
-                      }}
-                    >
-                      <div style={{ fontWeight: "bold", marginBottom: 8 }}>
+                    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow">
+                      {/* Card Title */}
+                      <div className="font-bold text-gray-800 dark:text-gray-100 mb-2 text-lg">
                         Lead Sources by Month
                       </div>
-                      <div style={{ width: "100%", height: 260 }}>
+
+                      {/* Bar Chart */}
+                      <div className="w-full h-64">
                         <ResponsiveContainer>
                           <BarChart data={stackedData}>
                             <CartesianGrid
                               strokeDasharray="3 3"
                               vertical={false}
                             />
-                            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                            <XAxis
+                              dataKey="month"
+                              tick={{ fontSize: 12, fill: "#6b7280" }}
+                            />
                             <YAxis
                               allowDecimals={false}
-                              tick={{ fontSize: 12 }}
+                              tick={{ fontSize: 12, fill: "#6b7280" }}
                             />
                             <ReTooltip />
                             <ReLegend />
@@ -1389,55 +1178,21 @@ export default function ManagerDashboard() {
                     </div>
 
                     {/* Geographic Distribution (Choropleth + Dots) */}
-                    <div
-                      style={{
-                        gridColumn: "1 / -1",
-                        background: "#fff",
-                        border: "1px solid #eee",
-                        borderRadius: 10,
-                        padding: 12,
-                        position: "relative",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: 8,
-                        }}
-                      >
-                        <div style={{ fontWeight: "bold" }}>
+                    <div className="col-span-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-gray-700 rounded-xl p-3 relative shadow-sm shadow-black/5">
+                      <div className="flex flex-wrap justify-between items-center mb-2 gap-2">
+                        <div className="font-bold text-gray-800 dark:text-gray-100">
                           Geographic Distribution of Leads
                         </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: 12,
-                              color: "#6b7280",
-                              marginRight: 8,
-                            }}
-                          >
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mr-2">
                             Darker shade = more leads
                           </div>
-                          <div style={{ display: "flex", gap: 6 }}>
+                          <div className="flex gap-2">
                             <button
                               onClick={() =>
                                 setMapZoom((z) => Math.max(1, z - 0.5))
                               }
-                              style={{
-                                padding: "4px 10px",
-                                border: "1px solid #e5e7eb",
-                                borderRadius: 6,
-                                background: "#f9fafb",
-                                cursor: "pointer",
-                              }}
+                              className="px-2.5 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 transition cursor-pointer"
                             >
                               -
                             </button>
@@ -1445,13 +1200,7 @@ export default function ManagerDashboard() {
                               onClick={() =>
                                 setMapZoom((z) => Math.min(8, z + 0.5))
                               }
-                              style={{
-                                padding: "4px 10px",
-                                border: "1px solid #e5e7eb",
-                                borderRadius: 6,
-                                background: "#f9fafb",
-                                cursor: "pointer",
-                              }}
+                              className="px-2.5 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 transition cursor-pointer"
                             >
                               +
                             </button>
@@ -1460,24 +1209,18 @@ export default function ManagerDashboard() {
                                 setMapZoom(1);
                                 setMapCenter([0, 20]);
                               }}
-                              style={{
-                                padding: "4px 10px",
-                                border: "1px solid #e5e7eb",
-                                borderRadius: 6,
-                                background: "#f9fafb",
-                                cursor: "pointer",
-                              }}
+                              className="px-2.5 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 transition cursor-pointer"
                             >
                               Reset
                             </button>
                           </div>
                         </div>
                       </div>
+
                       {(() => {
                         const leads = leadsQuery.data || [];
                         const toKey = (s) =>
                           (s || "").toString().trim().toLowerCase();
-                        // Count by country from geocoded cities
                         const counts = leads.reduce((acc, l) => {
                           const k = toKey(l.city);
                           const info = k && cityGeo[k];
@@ -1486,7 +1229,6 @@ export default function ManagerDashboard() {
                           acc[country] = (acc[country] || 0) + 1;
                           return acc;
                         }, {});
-                        // One dot per lead at city coordinates with slight jitter to avoid overlap
                         const citySeq = {};
                         const markers = leads
                           .map((l) => {
@@ -1513,9 +1255,8 @@ export default function ManagerDashboard() {
                           const v = counts[geoName] || 0;
                           if (max === 0) return "#e5e7eb";
                           const t = v / max;
-                          // Indigo palette to match other charts (light -> dark)
-                          const light = [224, 231, 255]; // #E0E7FF
-                          const dark = [99, 102, 241]; // #6366F1
+                          const light = [224, 231, 255];
+                          const dark = [99, 102, 241];
                           const mix = (a, b) => Math.round(a + (b - a) * t);
                           const r = mix(light[0], dark[0]);
                           const g = mix(light[1], dark[1]);
@@ -1524,13 +1265,13 @@ export default function ManagerDashboard() {
                         };
                         const GEO_URL =
                           "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
-                        // Render every lead as a dot (no sampling)
                         const sampled = markers;
+
                         return (
-                          <div style={{ width: "100%", height: 500 }}>
+                          <div className="w-full h-[500px]">
                             <ComposableMap
                               projectionConfig={{ scale: 200 }}
-                              style={{ width: "100%", height: "100%" }}
+                              className="w-full h-full"
                             >
                               <ZoomableGroup
                                 zoom={mapZoom}
@@ -1553,23 +1294,22 @@ export default function ManagerDashboard() {
                                         <Geography
                                           key={geo.rsmKey}
                                           geography={geo}
-                                          onMouseEnter={(e) => {
-                                            const v = counts[geoName] || 0;
+                                          onMouseEnter={(e) =>
                                             setMapHover({
                                               name: geoName,
-                                              count: v,
+                                              count: counts[geoName] || 0,
                                               visible: true,
                                               x: e.clientX,
                                               y: e.clientY,
-                                            });
-                                          }}
-                                          onMouseMove={(e) => {
+                                            })
+                                          }
+                                          onMouseMove={(e) =>
                                             setMapHover((prev) => ({
                                               ...prev,
                                               x: e.clientX,
                                               y: e.clientY,
-                                            }));
-                                          }}
+                                            }))
+                                          }
                                           onMouseLeave={() =>
                                             setMapHover((prev) => ({
                                               ...prev,
@@ -1602,19 +1342,13 @@ export default function ManagerDashboard() {
                                 ))}
                               </ZoomableGroup>
                             </ComposableMap>
+
                             {mapHover.visible && (
                               <div
+                                className="fixed z-50 bg-gray-900 text-white text-xs px-2 py-1.5 rounded-md shadow-md pointer-events-none"
                                 style={{
-                                  position: "fixed",
                                   left: mapHover.x + 12,
                                   top: mapHover.y + 12,
-                                  background: "#111827",
-                                  color: "#fff",
-                                  padding: "6px 8px",
-                                  borderRadius: 6,
-                                  fontSize: 12,
-                                  pointerEvents: "none",
-                                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
                                 }}
                               >
                                 {mapHover.name}: {mapHover.count} leads
@@ -1886,121 +1620,66 @@ export default function ManagerDashboard() {
             )}
 
             {/* Add Lead Form */}
-            <div
-              style={{
-                display: "flex",
-                gap: 12,
-                marginBottom: 20,
-                background: "#f8fafc",
-                padding: 18,
-                borderRadius: 10,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-              }}
-            >
+            <div className="flex gap-3 mb-5 bg-slate-50 dark:bg-slate-800 p-5 rounded-xl shadow-md shadow-black/5">
               {successMsg && (
-                <div
-                  style={{
-                    color: "#10b981",
-                    fontWeight: "bold",
-                    alignSelf: "center",
-                  }}
-                >
+                <div className="text-emerald-500 font-bold self-center">
                   {successMsg}
                 </div>
               )}
+
               <input
                 placeholder="Name"
                 value={form.name}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, name: e.target.value }))
                 }
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid #ddd",
-                  fontSize: 15,
-                  background: "#fff",
-                }}
+                className="flex-1 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-[15px] bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
               <input
                 placeholder="Email"
                 value={form.email}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, email: e.target.value }))
                 }
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid #ddd",
-                  fontSize: 15,
-                  background: "#fff",
-                }}
+                className="flex-1 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-[15px] bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
               <input
                 placeholder="Phone"
                 value={form.phone}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, phone: e.target.value }))
                 }
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid #ddd",
-                  fontSize: 15,
-                  background: "#fff",
-                }}
+                className="flex-1 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-[15px] bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
               <input
                 placeholder="City"
                 value={form.city}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, city: e.target.value }))
                 }
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid #ddd",
-                  fontSize: 15,
-                  background: "#fff",
-                }}
+                className="flex-1 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-[15px] bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
               <input
                 placeholder="Source"
                 value={form.source}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, source: e.target.value }))
                 }
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid #ddd",
-                  fontSize: 15,
-                  background: "#fff",
-                }}
+                className="flex-1 px-3 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-[15px] bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
               <button
-                style={{
-                  padding: "10px 18px",
-                  background: "#2563eb",
-                  color: "white",
-                  border: "none",
-                  borderRadius: 8,
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  fontSize: 15,
-                  boxShadow: "0 2px 8px rgba(37,99,235,0.08)",
-                }}
                 onClick={() => createLead.mutate(form)}
+                className="px-4 py-2.5 bg-blue-600 text-white font-bold text-[15px] rounded-lg shadow-md shadow-blue-500/10 hover:bg-blue-700 transition"
               >
                 Add Lead
               </button>
             </div>
+
             <div>
               <button
                 type="button"
@@ -2025,35 +1704,25 @@ export default function ManagerDashboard() {
             {/* Lead Assignment Controls */}
             {showUnassignedLeads && (
               <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "20px",
-                  padding: "15px",
-                  background: "#f8fafc",
-                  borderRadius: "8px",
-                  border: "1px solid #e2e8f0",
-                }}
+                className="
+              flex 
+              justify-between 
+              items-center 
+              mb-5 
+              p-4 
+              bg-slate-50 
+              dark:bg-slate-800 
+              rounded-lg 
+              border 
+              border-slate-200 
+              dark:border-slate-700
+            "
               >
                 <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      color: "#374151",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                    }}
-                  >
+                  <h3 className="m-0 text-[16px] font-bold text-gray-700 dark:text-gray-200">
                     Select leads to assign to teams
                   </h3>
-                  <p
-                    style={{
-                      margin: "5px 0 0 0",
-                      color: "#6b7280",
-                      fontSize: "14px",
-                    }}
-                  >
+                  <p className="mt-1 text-[14px] text-gray-500 dark:text-gray-400">
                     {selectedLeads.length > 0
                       ? `${selectedLeads.length} lead${
                           selectedLeads.length !== 1 ? "s" : ""
@@ -2061,20 +1730,17 @@ export default function ManagerDashboard() {
                       : "No leads selected"}
                   </p>
                 </div>
+
                 <button
-                  style={{
-                    padding: "10px 20px",
-                    background:
-                      selectedLeads.length > 0 ? "#10b981" : "#9ca3af",
-                    color: "white",
-                    border: "none",
-                    borderRadius: 8,
-                    cursor:
-                      selectedLeads.length > 0 ? "pointer" : "not-allowed",
-                    fontWeight: "bold",
-                    fontSize: 14,
-                    opacity: selectedLeads.length > 0 ? 1 : 0.6,
-                  }}
+                  className={`
+    px-5 py-2 rounded-lg font-bold text-sm
+    ${
+      selectedLeads.length > 0
+        ? "bg-emerald-500 cursor-pointer"
+        : "bg-gray-400 cursor-not-allowed opacity-60"
+    }
+    text-black dark:text-white
+  `}
                   onClick={handleSelectTeamClick}
                   disabled={selectedLeads.length === 0}
                 >
@@ -2084,17 +1750,8 @@ export default function ManagerDashboard() {
             )}
 
             {/* Table */}
-            <div style={{ width: "100%", overflowX: "auto" }}>
-              <div
-                style={{
-                  background: "#fff",
-                  borderRadius: 10,
-                  padding: 18,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                  width: "100%",
-                  border: "1px solid #eee",
-                }}
-              >
+            <div className="w-full overflow-x-auto">
+              <div className="w-full rounded-xl p-5 shadow-md shadow-black/5">
                 {showUnassignedLeads ? (
                   unassignedLeadsQuery.isLoading ? (
                     <p>Loading unassigned leads...</p>

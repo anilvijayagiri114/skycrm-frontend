@@ -161,7 +161,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
           {/* Main Floating Button */}
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="p-3 rounded-full bg-gray-800 shadow-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 flex items-center justify-center"
+            className="p-3 rounded-full bg-gray-400 shadow-lg text-gray-800 hover:bg-gray-700 hover:text-white transition-all duration-200 flex items-center justify-center"
             aria-label="Open menu"
           >
             {dropdownOpen ? <X size={20} /> : <User size={20} />}
@@ -173,14 +173,14 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
               {/* Theme Toggle */}
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-3 rounded-full bg-gray-800 shadow-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
+                className="p-3 rounded-full bg-gray-700 shadow-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200"
                 aria-label="Toggle theme"
               >
                 {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
               </button>
 
               {/* User Info Dropdown */}
-              <div className="w-48 bg-gray-800 rounded-lg shadow-lg ring-1 ring-white ring-opacity-10 text-gray-200">
+              <div className="w-48 bg-gray-700 rounded-lg shadow-lg ring-1 ring-white ring-opacity-10 text-gray-200">
                 <div className="px-4 py-2 border-b border-gray-700">
                   <div className="font-medium">{user?.name}</div>
                   <div className="text-gray-400">{user?.roleName}</div>
