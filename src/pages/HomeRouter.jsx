@@ -11,6 +11,7 @@ import RegisterUser from "../components/RegisterUser.jsx";
 import ChangePassword from "./ChangePassword.jsx";
 import ForgotPassword from "./ForgotPassword.jsx";
 import ManageUsers from "../components/ManageUsers.jsx";
+import ActivityLogs from '../components/ActivityLogs.jsx'
 
 export default function HomeRouter() {
   const user = getUserFromToken();
@@ -49,6 +50,7 @@ export default function HomeRouter() {
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/manageUsers" element={<ManageUsers />} />
+            <Route path="/activityLogs" element={<ActivityLogs/>}/>
           </Routes>
         </div>
       </main>
