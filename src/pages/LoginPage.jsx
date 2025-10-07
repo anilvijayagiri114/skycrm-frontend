@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { setToken } from "../utils/auth";
 import { Navigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   ShieldCheck,
@@ -80,16 +81,28 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [err, setErr] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoading(true);
+
+    // Simulate an API call or login delay
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log('Attempting login...');
-      const { data } = await api.post("/auth/login", { 
-        email, 
-        password 
+      console.log("Attempting login...");
+      const { data } = await api.post("/auth/login", {
+        email,
+        password,
       });
-      console.log('Login successful:', data);
+      console.log("Login successful:", data);
       setToken(data.token);
       if (data) {
         setEmail("");
@@ -102,8 +115,11 @@ export default function LoginPage() {
         nav("/");
       }
     } catch (e) {
-      console.error('Login error:', e);
-      setErr(e.response?.data?.error || "Login failed. Please check your credentials.");
+      console.error("Login error:", e);
+      setErr(
+        e.response?.data?.error ||
+          "Login failed. Please check your credentials."
+      );
     }
   };
 
@@ -202,13 +218,26 @@ export default function LoginPage() {
               <label className="text-base font-medium block">Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg text-base focus:outline-none focus:border-gray-900 transition-colors"
+                  className="w-full pl-10 pr-10 py-3 border-2 border-gray-300 rounded-lg text-base focus:outline-none focus:border-gray-900 transition-colors"
                   required
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
               </div>
             </div>
             <div className="flex justify-between items-center text-sm">
@@ -228,8 +257,16 @@ export default function LoginPage() {
                 Forgot password?
               </button>
             </div>
-            <button className="w-full py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all">
-              Login
+            <button
+              onClick={handleLogin}
+              disabled={isLoading}
+              className={`w-full py-3 text-white rounded-lg transition-all ${
+                isLoading
+                  ? "bg-gray-700 cursor-not-allowed"
+                  : "bg-gray-900 hover:bg-gray-800"
+              }`}
+            >
+              {isLoading ? "Logging..." : "Login"}
             </button>
           </form>
 
@@ -246,83 +283,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-// import { useState } from 'react'
-// import api from '../services/api'
-// import { setToken } from '../utils/auth'
-// import { useLocation, useNavigate } from 'react-router-dom'
-
-// export default function LoginPage(){
-//   const nav = useNavigate()
-//   const loc = useLocation()
-//   const selectedRole = loc.state?.role
-//   const [email,setEmail] = useState('')
-//   const [password,setPassword] = useState('')
-//   const [err,setErr] = useState('')
-
-//   const onSubmit = async (e) => {
-//     e.preventDefault()
-//     // try{
-//     //   const { data } = await api.post('/auth/login',{ email, password })
-//     //   setToken(data.token)
-//     //   if(email === 'salesmanager@test.com') {
-//     //     nav('/manager')
-//     //   } else {
-//     //     nav('/')
-//     //   }
-//     // }catch(e){
-//     //   setErr(e.response?.data?.error || 'Login failed')
-//     // }
-//     try {
-//       const { data } = await api.post("/auth/login", { email, password });
-//       setToken(data.token);
-//       if (data){
-//         setEmail('')
-//         setPassword('')
-//       }
-//       if (!data.user?.defaultPasswordChanged) {
-//         nav("/change-password");
-//       } else {
-//         nav("/");
-//       }
-//     } catch (e) {
-//       setErr(e.response?.data?.error || "Login failed");
-//     }
-//   }
-
-//   return (
-//     <div className="min-h-screen grid place-items-center bg-gray-50">
-//       <form onSubmit={onSubmit} className="bg-white p-6 rounded-2xl shadow w-[360px] space-y-3">
-//         <h1 className="text-xl font-semibold text-center">SkyCRM Login</h1>
-//         {selectedRole && (
-//           <div className="text-xs text-gray-600 text-center">Selected role: {selectedRole}</div>
-//         )}
-//         {err && <div className="text-sm text-red-600">{err}</div>}
-//         <div className="space-y-1">
-//           <label className="text-sm" >Email</label>
-//           <input className="w-full border rounded-lg px-3 py-2" placeholder="Enter Email" value={email} onChange={e=>setEmail(e.target.value)} />
-//         </div>
-//         <div className="space-y-1">
-//           <label className="text-sm">Password</label>
-//           <input type="password" className="w-full border rounded-lg px-3 py-2" placeholder="Enter Password" value={password} onChange={e=>setPassword(e.target.value)} />
-//         </div>
-//         <div className="flex justify-center mt-2">
-//           <button
-//             type="button"
-//             className="text-blue-500 hover:underline text-sm"
-//             onClick={() => {
-//               if (!selectedRole) {
-//                 alert('Please select a role before resetting password.');
-//                 return;
-//               }
-//               nav('/forgot-password', { state: { role: selectedRole, email } });
-//             }}
-//           >
-//             Forgot password?
-//           </button>
-//         </div>
-//         <button className="w-full py-2 bg-gray-900 text-white rounded-lg">Login</button>
-//       </form>
-//     </div>
-//   )
-// }
