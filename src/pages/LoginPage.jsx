@@ -77,19 +77,20 @@ export default function LoginPage() {
   const selectedRole = loc.state?.role || "Admin";
   const navigate = useNavigate();
   const theme = roleThemes[selectedRole];
-
+  const [waiting, SetWaiting] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const onSubmit = async (e) => {
     e.preventDefault();
+    SetWaiting(true);
     try {
-      console.log('Attempting login...');
-      const { data } = await api.post("/auth/login", { 
-        email, 
-        password 
+      console.log("Attempting login...");
+      const { data } = await api.post("/auth/login", {
+        email,
+        password,
       });
-      console.log('Login successful:', data);
+      console.log("Login successful:", data);
       setToken(data.token);
       if (data) {
         setEmail("");
@@ -102,8 +103,13 @@ export default function LoginPage() {
         nav("/");
       }
     } catch (e) {
-      console.error('Login error:', e);
-      setErr(e.response?.data?.error || "Login failed. Please check your credentials.");
+      console.error("Login error:", e);
+      setErr(
+        e.response?.data?.error ||
+          "Login failed. Please check your credentials."
+      );
+    } finally {
+      SetWaiting(false);
     }
   };
 
@@ -228,8 +234,23 @@ export default function LoginPage() {
                 Forgot password?
               </button>
             </div>
-            <button className="w-full py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all">
-              Login
+            <button
+              type="submit"
+              disabled={waiting}
+              className={`w-full py-3 rounded-lg transition-all ${
+                waiting
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-gray-900 hover:bg-gray-800 text-white"
+              }`}
+            >
+              {waiting ? (
+                <div className="flex justify-center items-center gap-2">
+                 
+                  Logging in...
+                </div>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
 
@@ -246,4 +267,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

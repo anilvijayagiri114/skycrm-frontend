@@ -217,7 +217,7 @@ export default function AllLogin() {
               </div>
             </div>
           </div>
-          <div className="relative animate-fade-in-up">
+          <div className=" h-[750px] relative animate-fade-in-up">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-3xl blur-3xl" />
             <img
               src="/modern-crm-dashboard-interface-with-charts-and-ana.jpg"
