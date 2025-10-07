@@ -30,8 +30,8 @@ export default function AllLogin() {
       features: ["Team Analytics", "Performance Reports", "Goal Setting"],
     },
     {
-      key: "Sales Representative",
-      title: "Sales Representative",
+      key: "Sales Representatives",
+      title: "Sales Representatives",
       description: "Manage leads and close deals efficiently",
       icon: TrendingUp,
       gradient: "from-teal-600 via-teal-700 to-teal-800",
@@ -504,3 +504,4 @@ export default function AllLogin() {
 // }
 
 // export default AllLogin
+
