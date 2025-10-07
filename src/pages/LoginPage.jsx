@@ -56,7 +56,7 @@ const roleThemes = {
     ],
     img: "/team-performance-dashboard-with-analytics-and-goal.jpg",
   },
-  "Sales Representative": {
+  "Sales Representatives": {
     gradient: "from-teal-900 via-teal-700 to-teal-600",
     icon: <TrendingUp className="w-14 h-14 text-white" />,
     title: "Sales Representative Login",
