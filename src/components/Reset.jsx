@@ -30,7 +30,7 @@ export default function Reset() {
   // }
 
   async function getRoleId(roleName) {
-    const res = await axios.get("http://localhost:8000/api/roles/getRoleId", {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/roles/getRoleId`, {
       params: { name: roleName }
     });
     return res.data.roleId;
@@ -46,7 +46,7 @@ export default function Reset() {
       // Get role ObjectId from backend
       const roleId = await getRoleId(role);
       // Send password reset request with role ObjectId
-      await axios.post("http://localhost:8000/api/auth/reset_password", {
+      await axios.post(`${import.meta.env.VITE_API_URL}/auth/reset_password`, {
         email,
         role: roleId,
         newPassword,
@@ -88,3 +88,4 @@ export default function Reset() {
     </div>
   );
 }
+
