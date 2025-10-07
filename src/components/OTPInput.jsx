@@ -11,7 +11,7 @@ export default function OTPInput() {
   function resendOTP() {
     if (disable) return;
     axios
-      .post("http://localhost:8000/send_recovery_email", {
+      .post(`${import.meta.env.VITE_API_URL}/send_recovery_email`, {
         OTP: otp,
         recipient_email: email,
       })
@@ -108,3 +108,4 @@ export default function OTPInput() {
     </div>
   );
 }
+
