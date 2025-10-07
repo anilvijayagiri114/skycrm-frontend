@@ -52,7 +52,7 @@ export default function Login() {
       const OTP = Math.floor(Math.random() * 9000 + 1000);
       setOTP(OTP);
         axios
-          .post("http://localhost:8000/api/auth/send_recovery_email", {
+          .post("http://localhost:8080/api/auth/send_recovery_email", {
           OTP,
           recipient_email: email,
         })
@@ -83,4 +83,5 @@ export default function Login() {
       </button>
     </div>
   );
+
 }
