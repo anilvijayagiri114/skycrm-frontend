@@ -1801,8 +1801,12 @@ export default function ManagerDashboard() {
         )}
         <AddTeamModal
           open={showAddTeam}
-          onClose={() => setShowAddTeam(false)}
+          onClose={() => {
+            setShowAddTeam(false);
+            setTeamToEdit(null);
+          }}
           onTeamAdded={handleTeamAdded}
+          team={teamToEdit}
         />
         <AddTeamLeadModal
           open={showTeamLeadModal}
