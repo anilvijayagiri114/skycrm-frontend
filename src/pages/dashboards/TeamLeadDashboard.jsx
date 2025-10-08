@@ -5,6 +5,7 @@ import api from "../../services/api";
 import Card from "../../components/Card";
 import LeadTable from "../../components/LeadTable";
 import handleLogout from "../../logoutHandler";
+import useLoadMore from "../../hooks/useLoadMore";
 
 export default function TeamLeadDashboard() {
   const qc = useQueryClient();
@@ -90,6 +91,23 @@ export default function TeamLeadDashboard() {
   const handleStatusChange = (id, statusName) => {
     statusMutation.mutate({ id, statusName });
   };
+  const {
+    visibleData: visibleLeads,
+    handleLoadMore,
+    hasMore,
+  } = useLoadMore(
+    leadsQuery.data || [],
+    10, 
+    10 
+  );
+  const followUpLeads = (leadsQuery.data || []).filter(
+    (lead) => lead.status?.name === "Follow-Up"
+  );
+  const {
+    visibleData: visibleFollowUps,
+    handleLoadMore: handleLoadMoreFollowUps,
+    hasMore: hasMoreFollowUps,
+  } = useLoadMore(followUpLeads, 10, 10);
 
   return (
     <div className="min-h-screen  w-full p-6 overflow-x-hidden">
@@ -268,7 +286,7 @@ export default function TeamLeadDashboard() {
                           <div>
                             <p className="text-gray-800 dark:text-gray-100 font-semibold">
                               {member.name}
-                            </p>  
+                            </p>
                             <p className="text-gray-500 dark:text-gray-300 text-sm">
                               {member.email}
                             </p>
@@ -310,14 +328,22 @@ export default function TeamLeadDashboard() {
                   <p>Loading...</p>
                 ) : (
                   <LeadTable
-                    leads={leadsQuery.data.filter(
-                      (lead) => lead.status?.name === "Follow-Up"
-                    )}
+                    leads={visibleFollowUps}
                     onOpen={onOpen}
                     onDelete={handleDelete}
                     statuses={statusesQuery.data}
                     onStatusChange={handleStatusChange}
                   />
+                )}
+                {hasMoreFollowUps && (
+                  <div className="flex justify-center mt-4">
+                    <button
+                      onClick={handleLoadMoreFollowUps}
+                      className="text-gary-400 font-medium "
+                    >
+                      Load More
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -377,13 +403,26 @@ export default function TeamLeadDashboard() {
                 {leadsQuery.isLoading ? (
                   <p>Loading...</p>
                 ) : (
-                  <LeadTable
-                    leads={leadsQuery.data}
-                    onOpen={onOpen}
-                    onDelete={handleDelete}
-                    statuses={statusesQuery.data}
-                    onStatusChange={handleStatusChange}
-                  />
+                  <>
+                    <LeadTable
+                      leads={visibleLeads} // just the sliced array
+                      onOpen={onOpen}
+                      onDelete={handleDelete}
+                      statuses={statusesQuery.data}
+                      onStatusChange={handleStatusChange}
+                    />
+
+                    {hasMore && (
+                      <div className="flex justify-center mt-4">
+                        <button
+                          onClick={handleLoadMore}
+                          className="text-gary-400 font-medium "
+                        >
+                          Load More
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Card from "../../components/Card";
 import LeadTable from "../../components/LeadTable";
+import useLoadMore from "../../hooks/useLoadMore";
 import handleLogout from "../../logoutHandler";
 
 export default function SalesRepDashboard() {
@@ -34,6 +35,11 @@ export default function SalesRepDashboard() {
   const handleStatusChange = (id, statusName) => {
     statusMutation.mutate({ id, statusName });
   };
+  const { visibleData, handleLoadMore, hasMore } = useLoadMore(
+    leads.data || [],
+    10,
+    10
+  );
 
   return (
     <div className="min-h-screen w-full p-6 overflow-x-hidden bg-white dark:bg-gray-800">
@@ -121,12 +127,22 @@ export default function SalesRepDashboard() {
               <p className="text-gray-700 dark:text-gray-300 p-5">Loading...</p>
             ) : (
               <LeadTable
-                leads={leads.data}
+                leads={visibleData}
                 onOpen={onOpen}
                 onDelete={handleDelete}
                 statuses={statuses.data}
                 onStatusChange={handleStatusChange}
               />
+            )}
+            {hasMore && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={handleLoadMore}
+                  className="text-gary-400 font-medium "
+                >
+                  Load More
+                </button>
+              </div>
             )}
           </Card>
         )}

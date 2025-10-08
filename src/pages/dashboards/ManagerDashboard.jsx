@@ -8,6 +8,7 @@ import AddTeamLeadModal from "../../components/AddTeamLeadModal";
 import LeadTable from "../../components/LeadTable";
 import LeadTableWithSelection from "../../components/LeadTableWithSelection";
 import TeamSelectionModal from "../../components/TeamSelectionModal";
+import useLoadMore from "../../hooks/useLoadMore";
 import {
   ResponsiveContainer,
   PieChart,
@@ -105,9 +106,7 @@ export default function ManagerDashboard() {
       unassignedLeadsQuery.refetch();
     }
   });
-  // console.log("Unassigned Leads",unassignedLeadsQuery.data);;
 
-  // Lead creation mutation
   const createLead = useMutation({
     mutationFn: async (payload) => (await api.post("/leads", payload)).data,
     onSuccess: () => {
@@ -291,6 +290,14 @@ export default function ManagerDashboard() {
       cancelled = true;
     };
   }, [leadsQuery.data]);
+
+  const { visibleData, hasMore, handleLoadMore } = useLoadMore(
+    showUnassignedLeads
+      ? unassignedLeadsQuery.data || []
+      : leadsQuery.data || [],
+    10, // initial load
+    10 // increment
+  );
 
   return (
     <div className="min-h-screen  dark:bg-gray-800 w-full p-6 overflow-x-hidden transition-colors duration-200">
@@ -1120,7 +1127,6 @@ export default function ManagerDashboard() {
                               innerRadius={60}
                               outerRadius={90}
                               paddingAngle={2}
-                             
                             >
                               {pieData.map((entry, index) => (
                                 <Cell
@@ -1129,7 +1135,7 @@ export default function ManagerDashboard() {
                                 />
                               ))}
                             </Pie>
-                            <ReTooltip 
+                            <ReTooltip
                               formatter={(value, name) => [value, name]}
                             />
                             <ReLegend verticalAlign="bottom" height={24} />
@@ -1683,7 +1689,7 @@ export default function ManagerDashboard() {
             <div>
               <button
                 type="button"
-                onClick={handleUnassignedLeadsClick}
+                onClick={() => setShowUnassignedLeads((prev) => !prev)}
                 aria-pressed={showUnassignedLeads}
                 className={`px-2.5 py-1.5 text-sm font-semibold rounded-md mx-2 my-2 transition-colors duration-150 focus:outline-none ${
                   showUnassignedLeads
@@ -1757,7 +1763,7 @@ export default function ManagerDashboard() {
                     <p>Loading unassigned leads...</p>
                   ) : (
                     <LeadTableWithSelection
-                      leads={unassignedLeadsQuery.data}
+                      leads={visibleData}
                       onOpen={onOpen}
                       onDelete={handleDelete}
                       statuses={statusesQuery.data}
@@ -1772,7 +1778,7 @@ export default function ManagerDashboard() {
                   <p>Loading...</p>
                 ) : (
                   <LeadTable
-                    leads={leadsQuery.data}
+                    leads={visibleData}
                     onOpen={onOpen}
                     onDelete={handleDelete}
                     statuses={statusesQuery.data}
@@ -1781,6 +1787,16 @@ export default function ManagerDashboard() {
                 )}
               </div>
             </div>
+            {hasMore && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={handleLoadMore}
+                  className="text-gary-400 font-medium "
+                >
+                  Load More
+                </button>
+              </div>
+            )}
           </Card>
         )}
         <AddTeamModal

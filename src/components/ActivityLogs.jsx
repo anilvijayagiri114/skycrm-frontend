@@ -8,6 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import socket from "../socket";
 import api from "../services/api";
+import useLoadMore from "../hooks/useLoadMore";
 
 const logIcons = {
   info: Activity,
@@ -56,6 +57,12 @@ export default function ActivityLogList() {
     return matchesSearch && matchesRole;
   });
 
+  const { visibleData, handleLoadMore, hasMore } = useLoadMore(
+    filteredLogs || [],
+    10,
+    10
+  );
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-6">
       <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
@@ -76,21 +83,21 @@ export default function ActivityLogList() {
         </div>
         <div className="relative mb-4">
           <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="border rounded-xl px-3 py-2 text-sm dark:bg-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Roles</option>
-          <option value="Admin">Admin</option>
-          <option value="Manager">Manager</option>
-          <option value="Sales Team Lead">Sales Team Lead</option>
-          <option value="Sales Representatives">Sales Representatives</option>
-        </select>
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="border rounded-xl px-3 py-2 text-sm dark:bg-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Roles</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="Sales Team Lead">Sales Team Lead</option>
+            <option value="Sales Representatives">Sales Representatives</option>
+          </select>
         </div>
       </div>
 
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-        {filteredLogs.map((log, index) => {
+        {visibleData.map((log, index) => {
           const Icon = logIcons[log.level] || Activity;
           return (
             <li key={index} className="py-4 flex items-start">
@@ -127,6 +134,16 @@ export default function ActivityLogList() {
           );
         })}
       </ul>
+      {hasMore && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={handleLoadMore}
+            className="text-gary-400 font-medium "
+          >
+            Load More
+          </button>
+        </div>
+      )}
     </div>
   );
 }

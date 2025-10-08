@@ -7,8 +7,14 @@ export default function UsersTable({ usersData }) {
   const [userInfo, setUserInfo] = useState(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(10); // show 10 initially
 
   // Sync local tableData with usersData prop
+  useEffect(() => {
+    setTableData(usersData);
+  }, [usersData]);
+
+  // Socket listener for real-time updates
   useEffect(() => {
     const handleStatusChange = (updatedUser) => {
       setTableData((prev) =>
@@ -23,28 +29,27 @@ export default function UsersTable({ usersData }) {
     };
   }, []);
 
-  useEffect(() => {
-    setTableData(usersData);
-  }, [usersData]);
-
-  const handleUserDetails = (userInfo) => {
-    setUserInfo(userInfo);
+  const handleUserDetails = (user) => {
+    setUserInfo(user);
     setShowUserDetails(true);
   };
 
   const handleUserUpdated = (updatedUser) => {
-    const newData = tableData.map((u) =>
-      u._id === updatedUser._id ? updatedUser : u
+    setTableData((prev) =>
+      prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
     );
-    setTableData(newData);
   };
 
   const handleUserDeleted = (deletedUser) => {
-    const newData = tableData.filter((u) => {
-      return u._id !== deletedUser._id;
-    });
-    setTableData(newData);
+    setTableData((prev) => prev.filter((u) => u._id !== deletedUser._id));
   };
+
+  // Load more handler
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 10);
+  };
+
+  const visibleUsers = tableData.slice(0, visibleCount);
 
   return (
     <>
@@ -61,7 +66,7 @@ export default function UsersTable({ usersData }) {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((user) => (
+            {visibleUsers.map((user) => (
               <tr
                 key={user._id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -115,13 +120,25 @@ export default function UsersTable({ usersData }) {
             ))}
           </tbody>
         </table>
+
+        {/* ---- Load More Button ---- */}
+        {visibleCount < tableData.length && (
+          <div className="flex justify-center my-4">
+            <button
+              onClick={handleLoadMore}
+              className=" text-gary-400 font-medium"
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
 
       <UserDetails
         open={showUserDetails}
         user={userInfo}
         onClose={() => setShowUserDetails(false)}
-        onUserUpdated={handleUserUpdated} // <-- update table immediately
+        onUserUpdated={handleUserUpdated}
         onUserDeleted={handleUserDeleted}
       />
     </>

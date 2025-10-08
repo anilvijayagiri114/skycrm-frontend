@@ -1,13 +1,29 @@
 const colors = {
-  'New':'bg-gray-100 text-gray-800',
-  'Contacted':'bg-blue-100 text-blue-800',
-  'Registered':'bg-indigo-100 text-indigo-800',
-  'Interested':'bg-amber-100 text-amber-800',
-  'Call Back':'bg-yellow-100 text-yellow-800',
-  'Follow-Up':'bg-purple-100 text-purple-800',
-  'Not Interested':'bg-red-100 text-red-800',
-  'Enrolled':'bg-green-100 text-green-800'
-}
-export default function StatusBadge({ name }){
-  return <span className={`px-2 py-1 text-xs rounded-md ${colors[name]||'bg-gray-100 text-gray-800'}`}>{name}</span>
+  New: "bg-orange-300 text-gray-800",
+  Contacted: "bg-blue-300 text-blue-800",
+  Registered: "bg-indigo-300 text-indigo-800",
+  Interested: "bg-amber-300 text-amber-800",
+  "Call Back": "bg-yellow-300 text-yellow-800",
+  "Follow-Up": "bg-purple-300 text-purple-800",
+  "Not Interested": "bg-red-300 text-red-800",
+  Enrolled: "bg-green-300 text-green-800",
+};
+
+export default function StatusBadge({ name }) {
+  return (
+    <span
+      className={`
+        ${colors[name] || "bg-gray-100 text-gray-800"}
+        inline-flex 
+        items-center 
+        justify-center 
+        text-xs 
+        rounded-md 
+        w-20 
+        h-6
+      `}
+    >
+      {name}
+    </span>
+  );
 }

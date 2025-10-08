@@ -1,23 +1,39 @@
 import { useQuery } from "@tanstack/react-query";
-import { Users, Target, Briefcase, Clock, UserPlus, Activity } from "lucide-react";
+import {
+  Users,
+  Target,
+  Briefcase,
+  Clock,
+  UserPlus,
+  Activity,
+} from "lucide-react";
 import api from "../../services/api";
-import Card from "../../components/Card";
 import StatusBadge from "../../components/StatusBadge";
+import UsersTable from "../../components/UsersTable";
+import useLoadMore from "../../hooks/useLoadMore";
 import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
+  // 🔹 Fetch all data using React Query
   const users = useQuery({
     queryKey: ["users"],
     queryFn: async () => (await api.get("/auth/users")).data,
   });
+
   const leads = useQuery({
     queryKey: ["leads"],
     queryFn: async () => (await api.get("/leads")).data,
   });
+
   const teams = useQuery({
     queryKey: ["teams"],
     queryFn: async () => (await api.get("/team")).data,
   });
+  const { visibleData, handleLoadMore, hasMore } = useLoadMore(
+    leads.data || [],
+    10,
+    10
+  );
 
   const stats = [
     {
@@ -43,18 +59,19 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen  w-full p-6 overflow-x-hidden">
-      {/* Dashboard Header */}
+    <div className="min-h-screen w-full p-6 overflow-x-hidden">
+      {/* ===== HEADER ===== */}
       <header className="mb-10">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
               Admin Dashboard
             </h1>
-            <p className=" text-gray-800 dark:text-gray-300">
+            <p className="text-gray-800 dark:text-gray-300">
               Overview of users, leads, and teams.
             </p>
           </div>
+
           <div className="flex gap-4">
             <Link
               to="/activityLogs"
@@ -81,7 +98,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      {/* Stats Section */}
+      {/* ===== STATS SECTION ===== */}
       <section className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-10">
         {stats.map((stat) => (
           <div
@@ -103,68 +120,28 @@ export default function AdminDashboard() {
         ))}
       </section>
 
-      {/* Content Grids */}
+      {/* ===== USERS & TEAMS ===== */}
       <section className="grid gap-6 lg:grid-cols-3 mb-10">
-        {/* Users Table */}
-        <div className="lg:col-span-2 bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+        {/* ---- Users Table ---- */}
+        <div className="lg:col-span-4 bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Users
           </h2>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
-                <tr>
-                  <th className="px-6 py-3 text-left">Name</th>
-                  <th className="px-6 py-3 text-left">Email</th>
-                  <th className="px-6 py-3 text-left">Role</th>
-                  <th className="px-6 py-3 text-left">Status</th>
-                </tr>
-              </thead>
-
-              <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-                {users.data?.map((u) => (
-                  <tr
-                    key={u._id}
-                    className={`transition-colors ${
-                      u.status === "inactive"
-                        ? "bg-gray-50 dark:bg-gray-800"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-800"
-                    }`}
-                  >
-                    <td className="px-6 py-4 font-medium text-gray-800 dark:text-gray-100">
-                      {u.name}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
-                      {u.email}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
-                      {u.roleName}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          u.status === "inactive"
-                            ? "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-                            : "bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200"
-                        }`}
-                      >
-                        {u.status === "inactive" ? "Inactive" : "Active"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {users.isLoading ? (
+            <p className="text-gray-500 dark:text-gray-300">Loading users...</p>
+          ) : users.isError ? (
+            <p className="text-red-500">Failed to load users.</p>
+          ) : (
+            <UsersTable usersData={users.data || []} />
+          )}
         </div>
 
-        {/* Teams List */}
+        {/* ---- Teams Section ---- */}
         <div className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Teams
           </h2>
-
           <ul className="space-y-3">
             {teams.data?.map((team) => (
               <li
@@ -188,56 +165,67 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* All Leads Table */}
+      {/* ===== ALL LEADS ===== */}
       <section className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
           All Leads
         </h2>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
-              <tr>
-                <th className="px-6 py-3 text-left">Name</th>
-                <th className="px-6 py-3 text-left">Phone</th>
-                <th className="px-6 py-3 text-left">Status</th>
-                <th className="px-6 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-              {leads.data?.map((lead) => (
-                <tr
-                  key={lead._id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <Link
-                      to={`/leads/${lead._id}`}
-                      className="text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      {lead.name}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
-                    {lead.phone}
-                  </td>
-                  <td className="px-6 py-4">
-                    <StatusBadge name={lead.status?.name} />
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link
-                      to={`/leads/${lead._id}/edit`}
-                      className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
-                    >
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Table Header */}
+        <div className="hidden md:grid grid-cols-4 font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 rounded-t-lg py-3 px-4">
+          <div>Name</div>
+          <div>Phone</div>
+          <div>Status</div>
+          <div className="text-right">Actions</div>
         </div>
+
+        {/* Table Rows */}
+        <div className="divide-y divide-gray-200 dark:divide-gray-600">
+          {visibleData.map((lead) => (
+            <div
+              key={lead._id}
+              className="grid grid-cols-1 md:grid-cols-4 items-center py-4 px-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              <div className="font-medium text-gray-800 dark:text-gray-100">
+                <Link
+                  to={`/leads/${lead._id}`}
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {lead.name}
+                </Link>
+              </div>
+
+              <div className="text-gray-600 dark:text-gray-300">
+                {lead.phone}
+              </div>
+
+              <div>
+                <StatusBadge name={lead.status?.name} />
+              </div>
+
+              <div className="text-right">
+                <Link
+                  to={`/leads/${lead._id}/edit`}
+                  className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
+                >
+                  Edit
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Load More Button */}
+        {hasMore && (
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={handleLoadMore}
+              className="text-gary-400 font-medium "
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );
