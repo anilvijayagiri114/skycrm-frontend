@@ -407,12 +407,14 @@ export default function AdminDashboard() {
                 <Loader2 className="animate-spin w-5 h-5 mr-2" /> Loading
               </div>
             ) : (
-              <UsersTable usersData={usersPagination?.data?.users || []} />
+              <div>
+                <UsersTable usersData={usersPagination?.data?.users || []} />
                 <PaginationControls
                    totalPages={usersPagination.data?.totalPages}
                    page={pageUser}
                    setPage={setPageUser}
                 />
+              </div>
             )}
           </div>
         </div>
