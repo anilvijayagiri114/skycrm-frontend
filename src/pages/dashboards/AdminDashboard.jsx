@@ -389,7 +389,6 @@ export default function AdminDashboard() {
         {/* Users Table */}
         <div className="lg:col-span-4 bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
           <div className="flex justify-between items-center mb-6">
-            <div>
             <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
               Users
             </h2>
@@ -400,12 +399,12 @@ export default function AdminDashboard() {
                 setPageUser(1);
               }}
             />
-            </div>
-             {usersPagination.isLoading ? (
+          </div>
+          {usersPagination.isLoading ? (
               <div className="flex justify-center items-center py-6 text-blue-600">
                 <Loader2 className="animate-spin w-5 h-5 mr-2" /> Loading
               </div>
-            ) : (
+          ) : (
               <div>
                 <UsersTable usersData={usersPagination?.data?.users || []} />
                 <PaginationControls
@@ -416,7 +415,6 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
-        </div>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-3 mb-10">
