@@ -399,10 +399,7 @@ export default function AdminDashboard() {
                 setPageUser(1);
               }}
             />
-          </div>
-
-          <div className="overflow-x-auto">
-            {usersPagination.isLoading ? (
+             {usersPagination.isLoading ? (
               <div className="flex justify-center items-center py-6 text-blue-600">
                 <Loader2 className="animate-spin w-5 h-5 mr-2" /> Loading
               </div>
