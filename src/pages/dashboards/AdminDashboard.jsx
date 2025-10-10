@@ -472,6 +472,7 @@ export default function AdminDashboard() {
               <Loader2 className="animate-spin w-5 h-5 mr-2" /> Loading
             </div>
           ) : (
+           <div>
             <table className="min-w-full text-sm">
               <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
                 <tr>
@@ -514,11 +515,12 @@ export default function AdminDashboard() {
                 ))}
               </tbody>
             </table>
-      <PaginationControls
-          totalPages={leadsPagination?.data?.totalPages}
-          page={pageLead}
-          setPage={setPageLead}
-        />
+            <PaginationControls
+              totalPages={leadsPagination?.data?.totalPages}
+              page={pageLead}
+              setPage={setPageLead}
+            />
+          </div>
           )}
         </div>
       </section>
