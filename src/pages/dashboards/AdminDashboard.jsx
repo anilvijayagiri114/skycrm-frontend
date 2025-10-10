@@ -511,12 +511,12 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           )}
-        </div>
-        <PaginationControls
+          <PaginationControls
           totalPages={leadsPagination?.data?.totalPages}
           page={pageLead}
           setPage={setPageLead}
         />
+        </div>
       </section>
     </div>
   );
