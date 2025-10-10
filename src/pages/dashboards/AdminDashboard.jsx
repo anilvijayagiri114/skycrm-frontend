@@ -387,7 +387,7 @@ export default function AdminDashboard() {
       {/* Content Grids */}
       <section className="grid gap-6 lg:grid-cols-3 mb-10">
         {/* Users Table */}
-        <div className="lg:col-span-2 bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+        <div className="lg:col-span-4 bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
               Users
@@ -417,7 +417,7 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-3 mb-10">
+      <section className="grid gap-6 lg:grid-cols-5 mb-10">
          <div className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Teams
