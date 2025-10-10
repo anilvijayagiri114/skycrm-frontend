@@ -407,13 +407,13 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <UsersTable usersData={usersPagination?.data?.users || []} />
-            )}
-          </div>
-          <PaginationControls
+      <PaginationControls
             totalPages={usersPagination.data?.totalPages}
             page={pageUser}
             setPage={setPageUser}
           />
+            )}
+          </div>
         </div>
 
         {/* Teams List */}
@@ -510,12 +510,12 @@ export default function AdminDashboard() {
                 ))}
               </tbody>
             </table>
-          )}
-          <PaginationControls
+      <PaginationControls
           totalPages={leadsPagination?.data?.totalPages}
           page={pageLead}
           setPage={setPageLead}
         />
+          )}
         </div>
       </section>
     </div>
