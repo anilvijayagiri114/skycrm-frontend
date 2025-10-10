@@ -388,6 +388,7 @@ export default function AdminDashboard() {
       <section className="grid gap-6 lg:grid-cols-3 mb-10">
         {/* Users Table */}
         <div className="lg:col-span-2 bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
               Users
             </h2>
@@ -398,7 +399,7 @@ export default function AdminDashboard() {
                 setPageUser(1);
               }}
             />
-  
+          </div>
 
           <div className="overflow-x-auto">
             {usersPagination.isLoading ? (
@@ -407,17 +408,18 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <UsersTable usersData={usersPagination?.data?.users || []} />
-      <PaginationControls
-            totalPages={usersPagination.data?.totalPages}
-            page={pageUser}
-            setPage={setPageUser}
-          />
+                <PaginationControls
+                   totalPages={usersPagination.data?.totalPages}
+                   page={pageUser}
+                   setPage={setPageUser}
+                />
             )}
           </div>
         </div>
+      </section>
 
-        {/* Teams List */}
-        <div className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+      <section className="grid gap-6 lg:grid-cols-3 mb-10">
+         <div className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Teams
           </h2>
