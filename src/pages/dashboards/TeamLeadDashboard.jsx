@@ -1,50 +1,38 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import TeamMemberPerformance from "../../components/TeamMemberPerformance";
+import { useState, useEffect ,useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Card from "../../components/Card";
 import LeadTable from "../../components/LeadTable";
 import handleLogout from "../../logoutHandler";
-import useLoadMore from "../../hooks/useLoadMore";
+import CustomDateRange from "../../components/CustomDateRange";
 
 export default function TeamLeadDashboard() {
   const qc = useQueryClient();
   const nav = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
   const [filter, setFilter] = useState("");
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    city: "",
-    source: "",
-  });
-  const [successMsg, setSuccessMsg] = useState("");
+  const [timeRange, setTimeRange] = useState("Week");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [showCustomDateRange, setShowCustomDateRange] = useState(false);
 
-  // Fetch team info for Team Members tab
-  const teams = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => (await api.get("/team")).data,
-  });
-  // Fetch leads and statuses for Data tab
+  // Fetch team data including leads assigned to the team and team members
   const leadsQuery = useQuery({
     queryKey: ["leads", filter],
-    queryFn: async () => {
-      const params = filter ? { status: filter } : {};
-      const { data } = await api.get("/leads", { params });
-      return data;
-    },
-    refetchInterval: 5000,
+    queryFn: async () =>
+      (await api.get("/leads", { params: filter ? { status: filter } : {} }))
+        .data,
   });
+ //console.log("leadsQuery", leadsQuery.data);
+
   const myTeamQuery = useQuery({
     queryKey: ["myTeam"],
     queryFn: async () => {
       try {
-        // Get user role from token
         const user = JSON.parse(localStorage.getItem("user"));
         const isAdmin = user?.roleName === "Admin";
-
-        // If admin, add teamId as query parameter (you can get this from URL or state)
         const endpoint = "/team/my-team" + (isAdmin ? "?viewAll=true" : "");
         const response = await api.get(endpoint);
         return response.data;
@@ -58,25 +46,88 @@ export default function TeamLeadDashboard() {
     retry: 1,
   });
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  console.log("My Team Data:", myTeamQuery.data);
-
+  // Fetch statuses for lead status filter dropdown and display
   const statusesQuery = useQuery({
     queryKey: ["statuses"],
     queryFn: async () => (await api.get("/statuses")).data,
   });
+
+  // States for leads displayed and filtered
+  const [teamLeads, setTeamLeads] = useState([]);
+  const [displayedLeads, setDisplayedLeads] = useState([]);
+
+  // Synchronize teamLeads from myTeamQuery data whenever it changes
+ console.log("myTeamQuery", myTeamQuery.data);
+useEffect(() => {
+  if (leadsQuery.data && myTeamQuery.data?._id) {
+    // Filter leads belonging to this team only
+    const filteredLeads = leadsQuery.data.filter(
+      (lead) => lead.teamId?._id === myTeamQuery.data._id
+    );
+    setTeamLeads(filteredLeads);
+  } else {
+    setTeamLeads([]);
+  }
+}, [leadsQuery.data, myTeamQuery.data]);
+
+   //console.log("teamLeads", teamLeads);
+
+//grouping leads by assignedTo member
+const leadsGroupedByMember = useMemo(() => {
+  if (!teamLeads || teamLeads.length === 0) return {};
+
+  return teamLeads.reduce((acc, lead) => {
+    const memberId = lead.assignedTo?._id || "unassigned";
+    if (!acc[memberId]) acc[memberId] = [];
+    acc[memberId].push(lead);
+    return acc;
+  }, {});
+}, [teamLeads]);
+
+//console.log("Grouped Leads:", leadsGroupedByMember);
+  // Compute displayedLeads any time teamLeads, filter, or date range change
+  useEffect(() => {
+    // Filter by status if filter set
+    let filteredLeads = filter
+      ? teamLeads.filter((lead) => lead.status?.name === filter)
+      : [...teamLeads];
+
+    // If custom time range is selected, filter leads by date range
+    if (timeRange === "Custom" && startDate && endDate) {
+      const normalizeDate = (date) => {
+        if (!date) return null;
+        const d = new Date(date);
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      };
+
+      const start = normalizeDate(startDate);
+      const end = normalizeDate(endDate);
+
+      filteredLeads = filteredLeads.filter((lead) => {
+        const leadDate = normalizeDate(lead.createdAt);
+        return leadDate >= start && leadDate <= end;
+      });
+    }
+
+    setDisplayedLeads(filteredLeads);
+  }, [teamLeads, filter, timeRange, startDate, endDate]);
+
+  // Mutation for deleting a lead
   const deleteLead = useMutation({
     mutationFn: async (id) => await api.delete(`/leads/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["leads"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["myTeam"] });
+      qc.invalidateQueries({ queryKey: ["leads"] });
+    },
   });
-  const onOpen = (lead) => nav(`/leads/${lead._id}`);
+
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this lead?")) {
       deleteLead.mutate(id);
     }
   };
+
+  // Mutation for updating lead status
   const statusMutation = useMutation({
     mutationFn: async (payload) =>
       (
@@ -85,29 +136,84 @@ export default function TeamLeadDashboard() {
         })
       ).data,
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["myTeam"] });
       qc.invalidateQueries({ queryKey: ["leads"] });
     },
   });
+
   const handleStatusChange = (id, statusName) => {
     statusMutation.mutate({ id, statusName });
   };
-  const {
-    visibleData: visibleLeads,
-    handleLoadMore,
-    hasMore,
-  } = useLoadMore(
-    leadsQuery.data || [],
-    10, 
-    10 
-  );
-  const followUpLeads = (leadsQuery.data || []).filter(
-    (lead) => lead.status?.name === "Follow-Up"
-  );
-  const {
-    visibleData: visibleFollowUps,
-    handleLoadMore: handleLoadMoreFollowUps,
-    hasMore: hasMoreFollowUps,
-  } = useLoadMore(followUpLeads, 10, 10);
+
+  const onOpen = (lead) => nav(`/leads/${lead._id}`);
+
+  // Derived statistics for team analytics and info display
+  const totalMembers = myTeamQuery.data?.members?.length || 0;
+  const assignedLeadsCount = teamLeads.length;
+  const closedCount = teamLeads.filter((l) => {
+    const name = l.status?.name || "";
+    return ["Enrolled", "Closed", "Won", "Converted"].includes(name);
+  }).length;
+  const performancePercent = assignedLeadsCount
+    ? Math.round((closedCount / assignedLeadsCount) * 100)
+    : 0;
+
+  const normalizeDate = (date) => {
+    if (!date) return null;
+    const d = new Date(date);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  };
+
+  const filteredTeamLeads = teamLeads.filter((lead) => {
+    const leadDate = normalizeDate(lead.createdAt);
+    if (!leadDate) return false;
+
+    const now = new Date();
+    let cutoff;
+
+    if (timeRange === "Day") {
+      cutoff = normalizeDate(now);
+    } else if (timeRange === "Week") {
+      cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    } else if (timeRange === "Year") {
+      cutoff = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+    } else if (timeRange === "Custom" && startDate) {
+      cutoff = new Date(startDate);
+    } else {
+      cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Month default
+    }
+
+    const normalizedCutoff = normalizeDate(cutoff);
+    const normalizedEndDate =
+      timeRange === "Custom" && endDate ? normalizeDate(new Date(endDate)) : normalizeDate(now);
+
+    return leadDate >= normalizedCutoff && leadDate <= normalizedEndDate;
+  });
+  // console.log("Filtered Leads:", filteredTeamLeads);
+  const totalFilteredLeads = filteredTeamLeads.length;
+  const enrolledCount = filteredTeamLeads.filter(
+    (l) => l.status?.name === "Enrolled"
+  ).length;
+  const newCount = filteredTeamLeads.filter(
+    (l) => l.status?.name === "New"
+  ).length;
+  const notInterestedCount = filteredTeamLeads.filter(
+    (l) => l.status?.name === "Not Interested"
+  ).length;
+  const processingCount =
+    totalFilteredLeads - (enrolledCount + newCount + notInterestedCount);
+  const remainingPct =
+    totalFilteredLeads > 0 ? Math.round((newCount / totalFilteredLeads) * 100) : 0;
+
+  const statItems = [
+    { key: "total", label: "Total Leads", value: totalFilteredLeads, color: "#111827" },
+    { key: "new", label: "New", value: newCount, color: "#6366F1" },
+    { key: "processing", label: "Processing", value: processingCount, color: "#F59E0B" },
+    { key: "enrolled", label: "Enrolled (Success)", value: enrolledCount, color: "#22C55E" },
+    { key: "not_interested", label: "Not Interested (Failed)", value: notInterestedCount, color: "#EF4444" },
+  ];
+
+  const handleLogoutClick = () => handleLogout(nav);
 
   return (
     <div className="min-h-screen  w-full p-6 overflow-x-hidden">
@@ -118,6 +224,7 @@ export default function TeamLeadDashboard() {
         Team Analytics
       </h2>
       <aside
+        className="no-scrollbar"
         style={{
           width: "100%",
           borderBottom: "1px solid #eee",
@@ -138,7 +245,7 @@ export default function TeamLeadDashboard() {
           <button
             key={btn.tab}
             onClick={() =>
-              btn.tab === "logout" ? handleLogout(nav) : setActiveTab(btn.tab)
+              btn.tab === "logout" ? handleLogoutClick() : setActiveTab(btn.tab)
             }
             style={{
               flexShrink: 0,
@@ -167,24 +274,153 @@ export default function TeamLeadDashboard() {
       </aside>
 
       {/* ===== Main Content ===== */}
-      <main style={{ flex: 1, padding: "20px" }}>
+      <main style={{ flex: 1, padding: "15px" }}>
         {activeTab === "home" && (
-          <Card className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden w-full max-w-xl mx-auto">
-            <div className="p-6 sm:p-8 flex flex-col gap-4">
+          <>
+          <Card title="Team Analytics Overview" className="mt-6">
+            <div style={{ padding: 20 }}>
+              <div style={{ gridColumn: "1 / -1", marginBottom: 16 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 12,
+                    flexWrap: "wrap",
+                    marginBottom: 10,
+                  }}
+                >
+                  <div style={{ fontWeight: "bold", fontSize: 16 }}>
+                    Lead Stats
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        border: "1px solid #4b5563",
+                        borderRadius: 10,
+                        padding: "4px 8px",
+                      }}
+                    >
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        style={{ transform: "rotate(-90deg)" }}
+                        aria-hidden
+                      >
+                        {(() => {
+                          const r = 8;
+                          const c = 2 * Math.PI * r;
+                          const off = c * (1 - remainingPct / 100);
+                          return (
+                            <>
+                              <circle cx="12" cy="12" r={r} stroke="#4b5563" strokeWidth="4" fill="none" />
+                              <circle
+                                cx="12"
+                                cy="12"
+                                r={r}
+                                stroke="#22c55e"
+                                strokeWidth="4"
+                                fill="none"
+                                strokeDasharray={c}
+                                strokeDashoffset={off}
+                                strokeLinecap="round"
+                                style={{ transition: "stroke-dashoffset 400ms ease" }}
+                              />
+                            </>
+                          );
+                        })()}
+                      </svg>
+                      <div style={{ fontSize: 12, color: "#d1d5db" }}>
+                        Remaining:{" "}
+                        <span style={{ color: "#f9fafb", fontWeight: 600 }}>
+                          {remainingPct}%
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 8,
+                        background: "#374151",
+                        padding: 4,
+                        borderRadius: 10,
+                        border: "1px solid #4b5563",
+                      }}
+                    >
+                      {["Day", "Week", "Month", "Year", "Custom"].map((r) => (
+                        <button
+                          key={r}
+                          onClick={() => {
+                            setTimeRange(r);
+                            if (r === "Custom") setShowCustomDateRange(true);
+                          }}
+                          style={{
+                            padding: "6px 12px",
+                            border: `1px solid ${timeRange === r ? "#6366f1" : "transparent"}`,
+                            background: timeRange === r ? "#6366f1" : "#374151",
+                            color: timeRange === r ? "#ffffff" : "#f9fafb",
+                            borderRadius: 8,
+                            cursor: "pointer",
+                            fontSize: 13,
+                            boxShadow: timeRange === r ? "0 2px 8px rgba(99,102,241,0.18)" : "none",
+                          }}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {statItems.map((s) => (
+                    <div
+                      key={s.key}
+                      className="bg-slate-700 border border-slate-600 rounded-xl p-4 flex flex-col gap-2"
+                    >
+                      <div className="text-sm text-slate-300">{s.label}</div>
+                      <div style={{ fontWeight: "bold", fontSize: 28, color: s.color }}>
+                        {s.value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+          <Card>
+            <TeamMemberPerformance leadsGroupedByMember={leadsGroupedByMember} users={myTeamQuery.data?.members || []}/>
+          </Card>
+         </>
+        )}
+
+        {activeTab === "team" && (
+          <Card className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden w-full max-w-2xl mx-auto">
+            <div className="flex flex-col gap-4">
               {myTeamQuery.isLoading && (
-                <p className="text-gray-500 dark:text-gray-300">
-                  Loading team summary...
-                </p>
+                <p className="text-gray-500 dark:text-gray-300">Loading team member data...</p>
               )}
+
               {myTeamQuery.isError && (
                 <p className="text-red-600 dark:text-red-400">
-                  Error loading team data.
+                  Failed to load team data: {myTeamQuery.error?.response?.data?.message || "Server Error"}
                 </p>
               )}
 
               {myTeamQuery.data && (
                 <>
-                  {/* Header */}
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">
                       {myTeamQuery.data.name} Dashboard
@@ -194,85 +430,33 @@ export default function TeamLeadDashboard() {
                     </p>
                   </div>
 
-                  {/* Stats Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                     <div className="bg-gray-200 dark:bg-gray-700 p-4 rounded-xl text-center flex flex-col items-center justify-center shadow-sm hover:scale-105 transform transition duration-300">
-                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        {myTeamQuery.data.members?.length || 0}
-                      </p>
-                      <span className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                        Total Members
-                      </span>
+                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{totalMembers}</p>
+                      <span className="text-sm text-gray-500 dark:text-gray-300 mt-1">Total Members</span>
                     </div>
                     <div className="bg-gray-200 dark:bg-gray-700 p-4 rounded-xl text-center flex flex-col items-center justify-center shadow-sm hover:scale-105 transform transition duration-300">
-                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        {myTeamQuery.data.leadsAssigned?.length || 0}
-                      </p>
-                      <span className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                        Assigned Leads
-                      </span>
+                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{assignedLeadsCount}</p>
+                      <span className="text-sm text-gray-500 dark:text-gray-300 mt-1">Assigned Leads</span>
                     </div>
                     <div className="bg-gray-200 dark:bg-gray-700 p-4 rounded-xl text-center flex flex-col items-center justify-center shadow-sm hover:scale-105 transform transition duration-300">
-                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        {/* Placeholder for future stats */}
-                        75%
-                      </p>
-                      <span className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                        Performance
-                      </span>
+                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{performancePercent}%</p>
+                      <span className="text-sm text-gray-500 dark:text-gray-300 mt-1">Performance</span>
                     </div>
                   </div>
 
-                  {/* Footer / Charts placeholder */}
-                  <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-xl text-gray-500 dark:text-gray-400 text-center">
-                    Show charts, stats, and summary here.
-                  </div>
-                </>
-              )}
-            </div>
-          </Card>
-        )}
-
-        {activeTab === "team" && (
-          <Card className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden w-full max-w-2xl mx-auto">
-            <div className="p-6 sm:p-8 flex flex-col gap-4">
-              {myTeamQuery.isLoading && (
-                <p className="text-gray-500 dark:text-gray-300">
-                  Loading team member data...
-                </p>
-              )}
-
-              {myTeamQuery.isError && (
-                <p className="text-red-600 dark:text-red-400">
-                  Failed to load team data:{" "}
-                  {myTeamQuery.error?.response?.data?.message || "Server Error"}
-                </p>
-              )}
-
-              {myTeamQuery.data && (
-                <>
-                  {/* Team Info */}
                   <div className="flex flex-col gap-2">
                     <h3 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
                       Team: {myTeamQuery.data.name}
                     </h3>
                     <p className="text-sm sm:text-base text-gray-500 dark:text-gray-300">
-                      Manager:{" "}
-                      <span className="font-semibold text-gray-700 dark:text-gray-200">
-                        {myTeamQuery.data.manager.name}
-                      </span>{" "}
-                      ({myTeamQuery.data.manager.email})
+                      Manager: <span className="font-semibold text-gray-700 dark:text-gray-200">{myTeamQuery.data.manager.name}</span> ({myTeamQuery.data.manager.email})
                     </p>
                     <p className="text-sm sm:text-base text-gray-500 dark:text-gray-300">
-                      Team Lead (You):{" "}
-                      <span className="font-semibold text-gray-700 dark:text-gray-200">
-                        {myTeamQuery.data.lead.name}
-                      </span>{" "}
-                      ({myTeamQuery.data.lead.email})
+                      Team Lead (You): <span className="font-semibold text-gray-700 dark:text-gray-200">{myTeamQuery.data.lead.name}</span> ({myTeamQuery.data.lead.email})
                     </p>
                   </div>
 
-                  {/* Members List */}
                   <div className="mt-4">
                     <h4 className="text-md sm:text-lg font-bold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-1 mb-3">
                       Sales Representatives ({myTeamQuery.data.members.length})
@@ -284,12 +468,8 @@ export default function TeamLeadDashboard() {
                           className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-200 dark:bg-gray-700 rounded-xl shadow-sm"
                         >
                           <div>
-                            <p className="text-gray-800 dark:text-gray-100 font-semibold">
-                              {member.name}
-                            </p>
-                            <p className="text-gray-500 dark:text-gray-300 text-sm">
-                              {member.email}
-                            </p>
+                            <p className="text-gray-800 dark:text-gray-100 font-semibold">{member.name}</p>
+                            <p className="text-gray-500 dark:text-gray-300 text-sm">{member.email}</p>
                           </div>
                         </li>
                       ))}
@@ -298,22 +478,15 @@ export default function TeamLeadDashboard() {
                 </>
               )}
 
-              {!myTeamQuery.data &&
-                !myTeamQuery.isLoading &&
-                !myTeamQuery.isError && (
-                  <p className="text-gray-500 dark:text-gray-300">
-                    No team information available for this user.
-                  </p>
-                )}
+              {!myTeamQuery.data && !myTeamQuery.isLoading && !myTeamQuery.isError && (
+                <p className="text-gray-500 dark:text-gray-300">No team information available for this user.</p>
+              )}
             </div>
           </Card>
         )}
 
         {activeTab === "follow-up" && (
-          <Card
-            title="Follow-Up list"
-            style={{ marginLeft: 0, paddingLeft: 0 }}
-          >
+          <Card title="Follow-Up list" style={{ marginLeft: 0, paddingLeft: 0 }}>
             <div style={{ width: "100%", overflowX: "auto" }}>
               <div
                 style={{
@@ -324,38 +497,28 @@ export default function TeamLeadDashboard() {
                   border: "1px solid #eee",
                 }}
               >
-                {leadsQuery.isLoading ? (
+                {myTeamQuery.isLoading ? (
                   <p>Loading...</p>
                 ) : (
                   <LeadTable
-                    leads={visibleFollowUps}
+                    leads={teamLeads.filter((lead) => lead.status?.name === "Follow-Up")}
                     onOpen={onOpen}
                     onDelete={handleDelete}
                     statuses={statusesQuery.data}
                     onStatusChange={handleStatusChange}
                   />
                 )}
-                {hasMoreFollowUps && (
-                  <div className="flex justify-center mt-4">
-                    <button
-                      onClick={handleLoadMoreFollowUps}
-                      className="text-gary-400 font-medium "
-                    >
-                      Load More
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </Card>
         )}
+
         {activeTab === "data" && (
-          <Card title="All Leads" style={{ marginLeft: 0, paddingLeft: 0 }}>
-            {/* Filter + Refresh */}
+          <Card title="My Team's Leads" style={{ marginLeft: 0, paddingLeft: 0 }}>
             <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
               <select
                 onChange={(e) => setFilter(e.target.value)}
-                defaultValue=""
+                value={filter}
                 style={{
                   padding: 10,
                   borderRadius: 8,
@@ -383,13 +546,15 @@ export default function TeamLeadDashboard() {
                   fontSize: 15,
                   boxShadow: "0 2px 8px rgba(16,185,129,0.08)",
                 }}
-                onClick={() => qc.invalidateQueries({ queryKey: ["leads"] })}
+                onClick={() => {
+                  qc.invalidateQueries({ queryKey: ["leads"] });
+                  qc.invalidateQueries({ queryKey: ["myTeam"] });
+                }}
               >
                 Refresh
               </button>
             </div>
 
-            {/* Table */}
             <div style={{ width: "100%", overflowX: "auto" }}>
               <div
                 style={{
@@ -400,35 +565,31 @@ export default function TeamLeadDashboard() {
                   border: "1px solid #eee",
                 }}
               >
-                {leadsQuery.isLoading ? (
+                {myTeamQuery.isLoading ? (
                   <p>Loading...</p>
                 ) : (
-                  <>
-                    <LeadTable
-                      leads={visibleLeads} // just the sliced array
-                      onOpen={onOpen}
-                      onDelete={handleDelete}
-                      statuses={statusesQuery.data}
-                      onStatusChange={handleStatusChange}
-                    />
-
-                    {hasMore && (
-                      <div className="flex justify-center mt-4">
-                        <button
-                          onClick={handleLoadMore}
-                          className="text-gary-400 font-medium "
-                        >
-                          Load More
-                        </button>
-                      </div>
-                    )}
-                  </>
+                  <LeadTable
+                    leads={displayedLeads}
+                    onOpen={onOpen}
+                    onDelete={handleDelete}
+                    statuses={statusesQuery.data}
+                    onStatusChange={handleStatusChange}
+                  />
                 )}
               </div>
             </div>
           </Card>
         )}
       </main>
+
+      <CustomDateRange
+        open={showCustomDateRange}
+        onClose={() => setShowCustomDateRange(false)}
+        onCustomRangeFetch={(start, end) => {
+          setStartDate(start);
+          setEndDate(end);
+        }}
+      />
     </div>
   );
 }
