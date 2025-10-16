@@ -113,14 +113,36 @@ export default function SalesRepDashboard() {
   const processingCount =
     totalFilteredLeads - (enrolledCount + newCount + notInterestedCount);
   const remainingPct =
-    totalFilteredLeads > 0 ? Math.round((newCount / totalFilteredLeads) * 100) : 0;
+    totalFilteredLeads > 0
+      ? Math.round((newCount / totalFilteredLeads) * 100)
+      : 0;
 
   const statItems = [
-    { key: "total", label: "Total Leads", value: totalFilteredLeads, color: "#f9fafb" },
+    {
+      key: "total",
+      label: "Total Leads",
+      value: totalFilteredLeads,
+      color: "#f9fafb",
+    },
     { key: "new", label: "New", value: newCount, color: "#818cf8" },
-    { key: "processing", label: "Processing", value: processingCount, color: "#fcd34d" },
-    { key: "enrolled", label: "Enrolled (Success)", value: enrolledCount, color: "#4ade80" },
-    { key: "not_interested", label: "Not Interested (Failed)", value: notInterestedCount, color: "#f87171" },
+    {
+      key: "processing",
+      label: "Processing",
+      value: processingCount,
+      color: "#fcd34d",
+    },
+    {
+      key: "enrolled",
+      label: "Enrolled (Success)",
+      value: enrolledCount,
+      color: "#4ade80",
+    },
+    {
+      key: "not_interested",
+      label: "Not Interested (Failed)",
+      value: notInterestedCount,
+      color: "#f87171",
+    },
   ];
 
   return (
@@ -186,50 +208,24 @@ export default function SalesRepDashboard() {
       <main className="flex-1 p-0 mt-4">
         {activeTab === "home" && (
           <>
-            <Card title="My Analytics Overview" className="mt-6 bg-gray-800 text-white">
-              <div style={{ padding: 20 }}>
-                <div style={{ gridColumn: "1 / -1", marginBottom: 16 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: 12,
-                      flexWrap: "wrap",
-                      marginBottom: 10,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: 16,
-                      }}
-                    >
-                      Lead Stats
-                    </div>
+            <Card
+              title="My Analytics Overview"
+              className="mt-6  dark:bg-gray-800 text-white"
+            >
+              <div className="p-5">
+                <div className="mb-4 col-span-full">
+                  {/* Header Row */}
+                  <div className="flex justify-between items-center flex-wrap gap-3 mb-3">
+                    <h2 className="text-lg font-semibold">Lead Stats</h2>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          border: "1px solid #4b5563",
-                          borderRadius: 10,
-                          padding: "4px 8px",
-                        }}
-                      >
+                    <div className="flex items-center gap-3">
+                      {/* Remaining Progress */}
+                      <div className="flex items-center gap-2 border border-gray-600 rounded-lg px-2 py-1.5">
                         <svg
                           width="22"
                           height="22"
                           viewBox="0 0 24 24"
-                          style={{ transform: "rotate(-90deg)" }}
+                          className="-rotate-90"
                           aria-hidden
                         >
                           {(() => {
@@ -238,30 +234,42 @@ export default function SalesRepDashboard() {
                             const off = c * (1 - remainingPct / 100);
                             return (
                               <>
-                                <circle cx="12" cy="12" r={r} stroke="#4b5563" strokeWidth="4" fill="none" />
-                                <circle cx="12" cy="12" r={r} stroke="#22c55e" strokeWidth="4" fill="none" strokeDasharray={c} strokeDashoffset={off} strokeLinecap="round" style={{ transition: "stroke-dashoffset 400ms ease" }} />
+                                <circle
+                                  cx="12"
+                                  cy="12"
+                                  r={r}
+                                  stroke="#4b5563"
+                                  strokeWidth="4"
+                                  fill="none"
+                                />
+                                <circle
+                                  cx="12"
+                                  cy="12"
+                                  r={r}
+                                  stroke="#22c55e"
+                                  strokeWidth="4"
+                                  fill="none"
+                                  strokeDasharray={c}
+                                  strokeDashoffset={off}
+                                  strokeLinecap="round"
+                                  style={{
+                                    transition: "stroke-dashoffset 400ms ease",
+                                  }}
+                                />
                               </>
                             );
                           })()}
                         </svg>
-                        <div style={{ fontSize: 12, color: "#d1d5db" }}>
+                        <div className="text-xs text-gray-700 dark:text-gray-200">
                           Remaining:{" "}
-                          <span style={{ color: "#f9fafb", fontWeight: 600 }}>
+                          <span className="text-gray-80 font-semibold">
                             {remainingPct}%
                           </span>
                         </div>
                       </div>
 
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 8,
-                          background: "#374151",
-                          padding: 4,
-                          borderRadius: 10,
-                          border: "1px solid #4b5563",
-                        }}
-                      >
+                      {/* Time Range Buttons */}
+                      <div className="flex gap-2  dark:bg-gray-700 p-1 border border-gray-600 rounded-lg">
                         {["Day", "Week", "Month", "Year", "Custom"].map((r) => (
                           <button
                             key={r}
@@ -269,16 +277,11 @@ export default function SalesRepDashboard() {
                               setTimeRange(r);
                               if (r === "Custom") setShowCustomDateRange(true);
                             }}
-                            style={{
-                              padding: "6px 12px",
-                              border: `1px solid ${timeRange === r ? "#6366f1" : "transparent"}`,
-                              background: timeRange === r ? "#6366f1" : "#374151",
-                              color: timeRange === r ? "#ffffff" : "#f9fafb",
-                              borderRadius: 8,
-                              cursor: "pointer",
-                              fontSize: 13,
-                              boxShadow: timeRange === r ? "0 2px 8px rgba(99,102,241,0.18)" : "none",
-                            }}
+                            className={`px-3 py-1.5 text-sm  dark:bg-slate-700 rounded-md font-medium transition-all duration-200 ${
+                              timeRange === r
+                                ? "bg-indigo-500 text-white border border-indigo-500 shadow-md"
+                                : "dark:bg-gray-700 text-gray-700  dark:text-gray-200 border border-transparent hover:bg-gray-200"
+                            }`}
                           >
                             {r}
                           </button>
@@ -287,11 +290,20 @@ export default function SalesRepDashboard() {
                     </div>
                   </div>
 
+                  {/* Stats Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     {statItems.map((s) => (
-                      <div key={s.key} className="bg-slate-700 border border-slate-600 rounded-xl p-4 flex flex-col gap-2">
-                        <div className="text-sm text-slate-300">{s.label}</div>
-                        <div style={{ fontWeight: "bold", fontSize: 28, color: s.color }}>{s.value}</div>
+                      <div
+                        key={s.key}
+                        className="dark:bg-slate-700 border bg-gray-300 dark:text-white text-black border-slate-600 rounded-xl p-4 flex flex-col gap-2"
+                      >
+                        <div className="text-sm text-gray-800">{s.label}</div>
+                        <div
+                          className="font-bold text-2xl"
+                          style={{ color: s.color }}
+                        >
+                          {s.value}
+                        </div>
                       </div>
                     ))}
                   </div>
