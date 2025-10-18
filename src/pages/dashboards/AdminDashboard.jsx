@@ -251,7 +251,7 @@ import { Link } from "react-router-dom";
 export default function AdminDashboard() {
   const users = useQuery({
     queryKey: ["users"],
-    queryFn: async () => (await api.get("/auth/users")).data,
+    queryFn: async () => (await api.get("/users")).data,
   });
   const leads = useQuery({
     queryKey: ["leads"],
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
     queryFn: async () =>
       (
         await api.get(
-          `/auth/users/paginationUsersList?page=${pageUser}&limit=${limitUser}`
+          `/users/paginationUsersList?page=${pageUser}&limit=${limitUser}`
         )
       ).data,
     keepPreviousData: true,
