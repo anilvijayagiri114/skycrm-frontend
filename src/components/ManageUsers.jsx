@@ -17,7 +17,7 @@ const ManageUsers = () => {
 
     const fetchUsers = async () => {
       try {
-        const res = await api.post("/auth/usersByRole", {
+        const res = await api.post("/users/usersByRole", {
           roleId: selectedRoleId,
         });
         setUsersData(res.data);
