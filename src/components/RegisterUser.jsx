@@ -38,7 +38,14 @@ const RegisterUser = () => {
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if(name=="phone"){
+      if (/^\d*$/.test(value) && value.length <= 10) {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    }
+    else{
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Handle form submit
