@@ -45,15 +45,12 @@ import React, { useContext } from "react";
 import { RecoveryContext } from "../App";
 
 export default function Login() {
-  const { setEmail, setPage, email, setOTP } = useContext(RecoveryContext);
+  const { setEmail, setPage, email} = useContext(RecoveryContext);
 
-  function nagigateToOtp() {
+  function navigateToOtp() {
     if (email) {
-      const OTP = Math.floor(Math.random() * 9000 + 1000);
-      setOTP(OTP);
         axios
           .post(`${import.meta.env.VITE_API_URL}/auth/send_recovery_email`, {
-          OTP,
           recipient_email: email,
         })
         .then(() => setPage("otp"))
@@ -77,7 +74,7 @@ export default function Login() {
       <button
         type="button"
         className="w-full py-2 bg-blue-600 text-white rounded mb-4"
-        onClick={nagigateToOtp}
+        onClick={navigateToOtp}
       >
         Send OTP
       </button>
@@ -85,4 +82,3 @@ export default function Login() {
   );
 
 }
-
