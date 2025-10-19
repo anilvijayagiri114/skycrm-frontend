@@ -97,7 +97,7 @@ export default function ManagerDashboard() {
     queryFn: async () => {
       const response = await api.get("/leads");
       console.log("respose", response);
-      return response.data.filter((lead) => !lead.assignedTo && !lead.teamId);
+      return response.data.filter((lead) => !lead.assignedTo || !lead.teamId);
     },
     enabled: showUnassignedLeads,
   });
@@ -163,7 +163,7 @@ export default function ManagerDashboard() {
   });
 
   // Lead assignment handlers
-  const handleUnassignedLefadsClick = () => {
+  const handleUnassignedLeadsClick = () => {
     setShowUnassignedLeads(!showUnassignedLeads);
     if (showUnassignedLeads) {
       setSelectedLeads([]);
@@ -678,9 +678,15 @@ export default function ManagerDashboard() {
                           </div>
 
                           {/* Time Range Buttons */}
-                          <div className="flex gap-2  dark:bg-gray-700 p-1 rounded-[10px] border border-gray-600
-"
-                          
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: 8,
+                              background: "#374151", // gray-700
+                              padding: 4,
+                              borderRadius: 10,
+                              border: "1px solid #4b5563", // gray-600
+                            }}
                           >
                             {["Day", "Week", "Month", "Year", "Custom"].map(
                               (r) => (
@@ -724,16 +730,24 @@ export default function ManagerDashboard() {
                         style={{
                           display: "grid",
                           gridTemplateColumns:
-                            "repeat(auto-fit, minmax(240px, 1fr))",
+                            "repeat(auto-fit, minmax(140px, 1fr))",
                           gap: 12,
                         }}
                       >
                         {statItems.map((s) => (
                           <div
-                            className="dark:bg-gray-700 bg-gray-300 dark:text-gray-200 text-gray-700 h-[120px] rounded-md p-12 flex-col gap-6  w-full"
                             key={s.key}
+                            style={{
+                              background: "#374151", // gray-700
+                              border: "1px solid #4b5563", // gray-600
+                              borderRadius: 12,
+                              padding: 12,
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 6,
+                            }}
                           >
-                            <div className="dark:text-gray-200 text-gray-800 font-medium">
+                            <div style={{ fontSize: 12, color: "#d1d5db" }}>
                               {s.label}
                             </div>{" "}
                             {/* gray-300 */}

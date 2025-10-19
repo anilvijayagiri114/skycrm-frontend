@@ -71,10 +71,10 @@ const RegisterUser = () => {
 
 
   return (
-    <div className="h-screen  grid place-items-center">
+    <div className="h-screen grid place-items-center bg-gray-50">
       <form
         onSubmit={handleSubmit}
-        className=" dark:bg-gray-600 p-6 rounded-2xl shadow w-[460px] space-y-4"
+        className="bg-white p-6 rounded-2xl shadow w-[360px] space-y-4"
       >
         <h1 className="text-xl font-semibold text-center">Register New User</h1>
 
@@ -87,7 +87,7 @@ const RegisterUser = () => {
             value={formData.name}
             onChange={handleChange}
             placeholder="Enter user's full name"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -101,7 +101,7 @@ const RegisterUser = () => {
             value={formData.email}
             onChange={handleChange}
             placeholder="Enter user's email"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -116,7 +116,7 @@ const RegisterUser = () => {
             value={formData.phone}
             onChange={handleChange}
             placeholder="Enter 10 digit mobile number"
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -130,7 +130,7 @@ const RegisterUser = () => {
             value={formData.roleName}
             onChange={handleChange}
             disabled={rolesQuery.isLoading || rolesQuery.isError}
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           >
             <option value="">
@@ -155,7 +155,7 @@ const RegisterUser = () => {
         <button
           style={{ paddingTop: "10px" }}
           type="submit"
-          className="w-full py-2 dark:bg-orange-500 bg-blue-400 text-white rounded-lg hover:bg-gray-800 transition"
+          className="w-full py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
         >
           Register New User
         </button>

@@ -3,12 +3,11 @@ import LoginPage from './pages/LoginPage.jsx';
 import AllLogin from './pages/AllLogin.jsx';
 import HomeRouter from './pages/HomeRouter.jsx';
 import LeadDetailPage from './pages/LeadDetailPage.jsx';
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, createContext } from "react";
 import Login from "./components/Login";
 import OTPInput from "./components/OTPInput";
 import Reset from "./components/Reset";
 import Recovered from "./components/Recovered";
-import sessionManager from './utils/sessionManager';
 
 export const RecoveryContext = createContext();
 
@@ -27,7 +26,7 @@ function OTPFlow() {
   }
   return (
     <RecoveryContext.Provider value={{ page, setPage, otp, setOTP, setEmail, email, role, setRole }}>
-      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-700 transition-colors duration-200">
+      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
         <NavigateComponents />
       </div>
     </RecoveryContext.Provider>
@@ -35,11 +34,6 @@ function OTPFlow() {
 }
 
 export default function App() {
-  useEffect(() => {
-    // Initialize session manager when app loads
-    console.log('Session manager initialized');
-  }, []);
-
   return (
     <Routes>
       <Route path="/login/select" element={<AllLogin />} />
