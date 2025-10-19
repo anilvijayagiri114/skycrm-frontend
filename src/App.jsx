@@ -26,7 +26,7 @@ function OTPFlow() {
   }
   return (
     <RecoveryContext.Provider value={{ page, setPage, otp, setOTP, setEmail, email, role, setRole }}>
-      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
+      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-700 transition-colors duration-200">
         <NavigateComponents />
       </div>
     </RecoveryContext.Provider>
