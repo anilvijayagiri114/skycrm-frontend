@@ -29,7 +29,7 @@ const AddTeamModal = ({ open, onClose, onTeamAdded, team = null }) => {
     const fetchUsers = async () => {
       try {
         const teamsRes = await api.get("/team");
-        const usersRes = await api.get("/auth/users");
+        const usersRes = await api.get("/users");
 
         const teamsData = teamsRes.data;
         const usersData = usersRes.data;
@@ -177,3 +177,4 @@ const AddTeamModal = ({ open, onClose, onTeamAdded, team = null }) => {
 };
 
 export default AddTeamModal;
+

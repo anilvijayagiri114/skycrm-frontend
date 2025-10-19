@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { setToken } from "../utils/auth";
+import sessionManager from "../utils/sessionManager";
 import {
   ShieldCheck,
   Users,
@@ -55,18 +56,27 @@ export default function LoginPage() {
     e.preventDefault();
     setWaiting(true);
     setError("");
-
+    
     try {
+      // console.log("formdatataaaaa",formData," selectedRole==",selectedRole);
+      formData.selectedRole=selectedRole;
       const { data } = await api.post("/auth/login", formData);
       setToken(data.token);
       setFormData({ email: "", password: "" });
 
+      // Reinitialize session manager after successful login
+      sessionManager.reinitialize();
+
       navigate(data.user?.defaultPasswordChanged ? "/" : "/change-password");
-    } catch (err) {
-      setError(
-        err.response?.data?.error ||
-          "Login failed. Please check your credentials."
-      );
+    } catch (e) {
+      const status = e.response?.status;
+      if (status === 429) {
+        setError("Too many login attempts. Please wait 15 minutes before trying again.");
+      } else if (status === 401) {
+        setError("Invalid email or password. Or not authorized to login as this role");
+      } else {
+        setError("Login failed. Please try again.");
+      }
     } finally {
       setWaiting(false);
     }

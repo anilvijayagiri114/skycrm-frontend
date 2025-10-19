@@ -14,7 +14,7 @@ export default function UserDetails({ open, user, onClose, onUserUpdated, onUser
     const fetchUserDetails = async () => {
       try {
         setLoading(true);
-        const res = await api.post("/auth/getUserDetails", { user });
+        const res = await api.post("/users/getUserDetails", { user });
         setUserDetails(res.data.user);
       } catch (err) {
         console.error(err);
@@ -46,7 +46,7 @@ export default function UserDetails({ open, user, onClose, onUserUpdated, onUser
       )
     ) {
       try {
-        const res = await api.put("/auth/updateUser", { user: userDetails });
+        const res = await api.put("/users/updateUser", { user: userDetails });
         onUserUpdated(res.data); // update table immediately
       } catch (err) {
         console.error(err);
@@ -65,7 +65,7 @@ export default function UserDetails({ open, user, onClose, onUserUpdated, onUser
 
   const handleDeleteUser = async () => {
     try {
-      const res = await api.delete("/auth/deleteUser", {
+      const res = await api.delete("/users/deleteUser", {
         data: { user: userDetails },
       });
       onUserDeleted(res.data.deletedUser); // update table immediately
