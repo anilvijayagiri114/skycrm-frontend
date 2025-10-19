@@ -21,21 +21,15 @@ export default function OTPInput() {
       .catch(console.log);
   }
 
-  function verifyOTP() {
-    axios
-      .post(`${import.meta.env.VITE_API_URL}/auth/verifyOTP`, {
-        OTP: OTPinput.join(""),
-        recipient_email: email,
-      })
-      .then((res) => {
-        setPage("reset");
-      })
-      .catch((err) => {
-        alert(
-          "The code you have entered is not correct, try again or re-send the link"
-        );
-      });
+  function verfiyOTP() {
+    if (parseInt(OTPinput.join("")) === otp) {
+      setPage("reset");
       return;
+    }
+    alert(
+      "The code you have entered is not correct, try again or re-send the link"
+    );
+    return;
   }
 
   React.useEffect(() => {
@@ -85,7 +79,7 @@ export default function OTPInput() {
                 <div className="flex flex-col space-y-5">
                   <div>
                     <a
-                      onClick={() => verifyOTP()}
+                      onClick={() => verfiyOTP()}
                       className="flex flex-row cursor-pointer items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm"
                     >
                       Verify Account
@@ -114,5 +108,4 @@ export default function OTPInput() {
     </div>
   );
 }
-
 
