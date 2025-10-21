@@ -3,11 +3,12 @@ import LoginPage from './pages/LoginPage.jsx';
 import AllLogin from './pages/AllLogin.jsx';
 import HomeRouter from './pages/HomeRouter.jsx';
 import LeadDetailPage from './pages/LeadDetailPage.jsx';
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import Login from "./components/Login";
 import OTPInput from "./components/OTPInput";
 import Reset from "./components/Reset";
 import Recovered from "./components/Recovered";
+import sessionManager from './utils/sessionManager';
 
 export const RecoveryContext = createContext();
 
@@ -34,6 +35,11 @@ function OTPFlow() {
 }
 
 export default function App() {
+  useEffect(() => {
+    // Initialize session manager when app loads
+    console.log('Session manager initialized');
+  }, []);
+
   return (
     <Routes>
       <Route path="/login/select" element={<AllLogin />} />
@@ -46,7 +52,39 @@ export default function App() {
 }
 
 function Protected({ children }) {
+  const [isValidating, setIsValidating] = useState(true);
+  const [isValid, setIsValid] = useState(false);
   const token = localStorage.getItem('token');
-  if (!token) return <Navigate to="/login/select" replace />;
+
+  useEffect(() => {
+    async function validateSession() {
+      if (!token) {
+        setIsValidating(false);
+        return;
+      }
+
+      try {
+        await sessionManager.validateSession();
+        setIsValid(true);
+      } catch (error) {
+        console.error('Session validation failed:', error);
+        // Clear invalid token
+        localStorage.removeItem('token');
+      } finally {
+        setIsValidating(false);
+      }
+    }
+
+    validateSession();
+  }, [token]);
+
+  if (isValidating) {
+    return <div>Loading...</div>; // Or your loading component
+  }
+
+  if (!token || !isValid) {
+    return <Navigate to="/login/select" replace />;
+  }
+
   return children;
 }

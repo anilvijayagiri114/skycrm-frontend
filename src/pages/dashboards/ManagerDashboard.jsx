@@ -97,7 +97,7 @@ export default function ManagerDashboard() {
     queryFn: async () => {
       const response = await api.get("/leads");
       console.log("respose", response);
-      return response.data.filter((lead) => !lead.assignedTo || !lead.teamId);
+      return response.data.filter((lead) => !lead.assignedTo && !lead.teamId);
     },
     enabled: showUnassignedLeads,
   });
@@ -163,7 +163,7 @@ export default function ManagerDashboard() {
   });
 
   // Lead assignment handlers
-  const handleUnassignedLeadsClick = () => {
+  const handleUnassignedLefadsClick = () => {
     setShowUnassignedLeads(!showUnassignedLeads);
     if (showUnassignedLeads) {
       setSelectedLeads([]);
