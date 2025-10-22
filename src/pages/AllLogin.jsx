@@ -167,7 +167,7 @@ export default function AllLogin() {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-5 md:py-0">
+      <section className="container mx-auto px-4 py-20 md:py-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-10 animate-fade-in">
             
@@ -217,8 +217,8 @@ export default function AllLogin() {
               </div>
             </div>
           </div>
-          <div className=" h-full relative animate-fade-in-up">
-            <div />
+          <div className=" h-[750px] relative animate-fade-in-up">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-3xl blur-3xl" />
             <img
               src="/modern-crm-dashboard-interface-with-charts-and-ana.jpg"
               alt="Sky CRM Dashboard"
@@ -229,7 +229,7 @@ export default function AllLogin() {
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-10">
+      <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16 space-y-4">
           <span className="inline-block px-4 py-1.5 border-2 border-blue-600 text-blue-600 rounded-full text-sm font-medium">
             Powerful Features
@@ -269,7 +269,7 @@ export default function AllLogin() {
       {/* Role-Based Access Section */}
       <section
         ref={rolesRef}
-        className="container mx-auto px-4 py-10 bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl my-5"
+        className="container mx-auto px-4 py-20 bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl my-12"
       >
         <div className="text-center mb-16 space-y-4">
           <span className="inline-block px-4 py-1.5 border-2 border-purple-600 text-purple-600 rounded-full text-sm font-medium">
@@ -318,7 +318,7 @@ export default function AllLogin() {
       </section>
 
       {/* Benefits Section */}
-      <section className="container mx-auto px-4 py-5">
+      <section className="container mx-auto px-4 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="relative animate-fade-in">
             <div className="absolute inset-0 bg-gradient-to-br from-teal-400/20 to-blue-400/20 rounded-3xl blur-3xl" />
@@ -355,7 +355,7 @@ export default function AllLogin() {
       </section>
 
       {/* Security Section */}
-      <section className="container mx-auto px-4 py-10 bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl my-10">
+      <section className="container mx-auto px-4 py-20 bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl my-12">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-fade-in">
             <span className="inline-block px-4 py-1.5 border-2 border-purple-600 text-purple-600 rounded-full text-sm font-medium">
@@ -409,7 +409,7 @@ export default function AllLogin() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-5 mb-10">
+      <section className="container mx-auto px-4 py-20 mb-12">
         <div className="bg-gradient-to-br from-blue-600 via-blue-400 to-teal-600 rounded-xl text-white overflow-hidden relative p-16">
           <div className="absolute inset-0 bg-[url('/abstract-geometric-pattern.png')] opacity-10" />
           <div className="text-center space-y-6 relative z-10">
@@ -440,7 +440,7 @@ export default function AllLogin() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-white/90 backdrop-blur-md py-5">
+      <footer className="border-t bg-white/90 backdrop-blur-md py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">

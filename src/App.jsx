@@ -27,7 +27,7 @@ function OTPFlow() {
   }
   return (
     <RecoveryContext.Provider value={{ page, setPage, otp, setOTP, setEmail, email, role, setRole }}>
-      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-700 transition-colors duration-200">
+      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
         <NavigateComponents />
       </div>
     </RecoveryContext.Provider>
@@ -52,7 +52,39 @@ export default function App() {
 }
 
 function Protected({ children }) {
+  const [isValidating, setIsValidating] = useState(true);
+  const [isValid, setIsValid] = useState(false);
   const token = localStorage.getItem('token');
-  if (!token) return <Navigate to="/login/select" replace />;
+
+  useEffect(() => {
+    async function validateSession() {
+      if (!token) {
+        setIsValidating(false);
+        return;
+      }
+
+      try {
+        await sessionManager.validateSession();
+        setIsValid(true);
+      } catch (error) {
+        console.error('Session validation failed:', error);
+        // Clear invalid token
+        localStorage.removeItem('token');
+      } finally {
+        setIsValidating(false);
+      }
+    }
+
+    validateSession();
+  }, [token]);
+
+  if (isValidating) {
+    return <div>Loading...</div>; // Or your loading component
+  }
+
+  if (!token || !isValid) {
+    return <Navigate to="/login/select" replace />;
+  }
+
   return children;
 }
