@@ -34,9 +34,9 @@ class SessionManager {
   }
 
   async handleVisibilityChange() {
-    // If page becomes hidden and user is not actively navigating within the app
+    
     if (document.hidden && !this.isLoggingOut && !this.isNavigating && getToken()) {
-      // Add a small delay to avoid logout on quick tab switches
+  
       setTimeout(async () => {
         if (document.hidden && !this.isLoggingOut && !this.isNavigating && getToken()) {
           this.isLoggingOut = true;
