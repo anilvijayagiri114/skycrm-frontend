@@ -9,6 +9,7 @@ import LeadTable from "../../components/LeadTable";
 import LeadTableWithSelection from "../../components/LeadTableWithSelection";
 import TeamSelectionModal from "../../components/TeamSelectionModal";
 import useLoadMore from "../../hooks/useLoadMore";
+import { getUserFromToken } from "../../utils/auth";
 import {
   ResponsiveContainer,
   PieChart,
