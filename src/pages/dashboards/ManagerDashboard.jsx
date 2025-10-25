@@ -1394,6 +1394,14 @@ export default function ManagerDashboard() {
                       <h3 className="text-lg font-semibold text-gray-900">
                         {t.name}
                       </h3>
+                      {getUserFromToken().roleName === "Admin" && (
+                        <p className="text-sm text-gray-600">
+                          Manager:{" "}
+                          <span className="font-medium text-green-600">
+                            {t.manager?.name || "Not assigned"}
+                          </span>{" "}
+                        </p>
+                      )}
                       <p className="text-sm text-gray-600">
                         Lead:{" "}
                         <span className="font-medium text-indigo-600">
