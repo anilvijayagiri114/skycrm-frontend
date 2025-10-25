@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import Card from "../../components/Card";
@@ -9,7 +10,6 @@ import LeadTable from "../../components/LeadTable";
 import LeadTableWithSelection from "../../components/LeadTableWithSelection";
 import TeamSelectionModal from "../../components/TeamSelectionModal";
 import useLoadMore from "../../hooks/useLoadMore";
-import { getUserFromToken } from "../../utils/auth";
 import {
   ResponsiveContainer,
   PieChart,
@@ -32,6 +32,7 @@ import {
 } from "react-simple-maps";
 import CustomDateRange from "../../components/CustomDateRange";
 import handleLogout from "../../logoutHandler";
+import { getUserFromToken } from "../../utils/auth";
 
 export default function ManagerDashboard() {
   const [activeTab, setActiveTab] = useState("home");
@@ -300,6 +301,54 @@ export default function ManagerDashboard() {
     10 // increment
   );
 
+  const [showOptions, setShowOptions] = useState(false);
+  const [customDates, setCustomDates] = useState({ start: "", end: "" });
+  const dropdownRef = useRef(null);
+
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowOptions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleReportClick = async (type) => {
+    try {
+      let params = {};
+      console.log("Custom Dates:", customDates);
+      if (type === "custom") {
+        console.log("In custom");
+        params = { type, start: customDates.start, end: customDates.end };
+      } else {
+        params = { type };
+      }
+
+      const response = await api.get("/auth/report", {
+        params,
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `Manager_Report_${type === "custom" ? "Custom" : type}.pdf`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      setShowOptions(false); // close dropdown after generating
+    } catch (err) {
+      console.error("Failed to download report:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen  dark:bg-gray-800 w-full p-6 overflow-x-hidden transition-colors duration-200">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
@@ -345,6 +394,7 @@ export default function ManagerDashboard() {
           </button>
         ))}
       </aside>
+
       <main style={{ flex: 1, padding: 0 }}>
         {activeTab === "home" && (
           <Card title="Analytics Overview">
@@ -352,6 +402,7 @@ export default function ManagerDashboard() {
               {/* <h2 style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
                 Manager Analytics
               </h2> */}
+
               <p style={{ marginBottom: 14, color: "#4b5563" }}>
                 Lead Sources overview and monthly breakdown.
               </p>
@@ -721,6 +772,86 @@ export default function ManagerDashboard() {
                                   {r}
                                 </button>
                               )
+                            )}
+                          </div>
+                          <div
+                            className="relative inline-block"
+                            ref={dropdownRef}
+                          >
+                            <button
+                              onClick={() => setShowOptions((prev) => !prev)}
+                              className="px-3 py-2 rounded-md border border-gray-300 bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                            >
+                              Generate Report
+                            </button>
+
+                            {showOptions && (
+                              <div className="absolute top-full left-0 w-50 bg-white border border-gray-300 z-50 p-2 shadow-md">
+                                <div
+                                  className="cursor-pointer mb-1 hover:bg-gray-100 rounded px-2 py-1"
+                                  onClick={() => handleReportClick("today")}
+                                >
+                                  Today's Report
+                                </div>
+                                <div
+                                  className="cursor-pointer mb-1 hover:bg-gray-100 rounded px-2 py-1"
+                                  onClick={() => handleReportClick("week")}
+                                >
+                                  1 Week Report
+                                </div>
+                                <div
+                                  className="cursor-pointer mb-1 hover:bg-gray-100 rounded px-2 py-1"
+                                  onClick={() => handleReportClick("15days")}
+                                >
+                                  15 Days Report
+                                </div>
+                                <div
+                                  className="cursor-pointer mb-1 hover:bg-gray-100 rounded px-2 py-1"
+                                  onClick={() => handleReportClick("month")}
+                                >
+                                  1 Month Report
+                                </div>
+                                <div
+                                  className="cursor-pointer mb-2 hover:bg-gray-100 rounded px-2 py-1"
+                                  onClick={() => handleReportClick("3month")}
+                                >
+                                  3 Month Report
+                                </div>
+
+                                <div className="border-t border-gray-200 pt-2">
+                                  <label className="block mb-1 text-gray-700">
+                                    Custom Report:
+                                  </label>
+                                  <input
+                                    type="date"
+                                    value={customDates.start}
+                                    onChange={(e) =>
+                                      setCustomDates((prev) => ({
+                                        ...prev,
+                                        start: e.target.value,
+                                      }))
+                                    }
+                                    className="mb-1 w-full border border-gray-300 rounded px-2 py-1"
+                                  />
+                                  <input
+                                    type="date"
+                                    value={customDates.end}
+                                    onChange={(e) =>
+                                      setCustomDates((prev) => ({
+                                        ...prev,
+                                        end: e.target.value,
+                                      }))
+                                    }
+                                    className="mb-2 w-full border border-gray-300 rounded px-2 py-1"
+                                  />
+                                  <button
+                                    onClick={() => handleReportClick("custom")}
+                                    className="w-full py-1 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
+                                  >
+                                    Generate Report
+                                  </button>
+                                </div>
+                              </div>
                             )}
                           </div>
                         </div>
