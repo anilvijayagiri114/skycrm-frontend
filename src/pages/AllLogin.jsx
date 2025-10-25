@@ -167,62 +167,71 @@ export default function AllLogin() {
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 py-10 md:py-16">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-10 animate-fade-in">
-            
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-balance leading-tight">
+      <section className="w-full bg-gradient-to-b from-white via-blue-50 to-white py-12 md:py-20">
+        <div className="mx-auto w-[95%] md:w-[92%] lg:w-[90%] grid lg:grid-cols-2 gap-10 md:gap-16 items-center">
+          {/* Left Content */}
+          <div className="space-y-8 text-center lg:text-left animate-fade-in">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900">
               Transform Your Sales with{" "}
-              <span className="bg-blue-600  bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">
                 Sky CRM
               </span>
             </h2>
-            <p className="text-xl text-gray-600 text-pretty leading-relaxed">
+
+            <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
               The intelligent CRM platform designed for modern sales teams.
               Streamline workflows, boost productivity, and close more deals
               with powerful automation and analytics.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <button  onClick={HandleRoles} className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-900 hover:opacity-90 text-white rounded-lg font-medium text-lg transition-opacity">
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+              <button
+                onClick={HandleRoles}
+                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-900 hover:opacity-90 text-white rounded-lg font-medium text-lg transition-opacity"
+              >
                 Start Free Trial
               </button>
               <button className="px-8 py-3 border-2 border-gray-300 hover:border-gray-400 bg-transparent rounded-lg font-medium text-lg transition-colors">
                 Watch Demo
               </button>
             </div>
-            <div className="flex items-center gap-6 pt-4">
-              <div className="flex -space-x-2"></div>
-              <div className="flex items-center gap-6 pt-4">
-                <div className="flex -space-x-2">
-                  {user.map((i) => (
-                    <img
-                      key={i.id}
-                      src={i.avatar}
-                      alt={i.name}
-                      className="w-10 h-10 rounded-full border-2 border-white"
-                    />
-                  ))}
-                </div>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4].map((i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                  <span className="ml-2 text-sm font-medium">
-                    4/5 from 2,500+ reviews
-                  </span>
-                </div>
+
+            {/* Reviews Section */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-6">
+              {/* User Avatars */}
+              <div className="flex -space-x-2">
+                {user.map((i) => (
+                  <img
+                    key={i.id}
+                    src={i.avatar}
+                    alt={i.name}
+                    className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
+                  />
+                ))}
+              </div>
+
+              {/* Rating */}
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4].map((i) => (
+                  <Star
+                    key={i}
+                    className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                  />
+                ))}
+                <span className="ml-2 text-sm md:text-base font-medium text-gray-700">
+                  4/5 from 2,500+ reviews
+                </span>
               </div>
             </div>
           </div>
-          <div >
-            <div />
+
+          {/* Right Image */}
+          <div className="flex justify-center lg:justify-end">
             <img
               src="/modern-crm-dashboard-interface-with-charts-and-ana.jpg"
               alt="Sky CRM Dashboard"
-              className="relative rounded-3xl shadow-2xl border-4 border-white"
+              className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl rounded-3xl shadow-2xl border-4 border-white object-cover"
             />
           </div>
         </div>
@@ -296,7 +305,7 @@ export default function AllLogin() {
               >
                 <div className="text-center pb-4">
                   <div
-                    className={`w-20 h-20 mx-auto bg-gradient-to-br ${role.gradient} rounded-3xl flex items-center justify-center mb-4 group-hover:rotate-6 transition-transform shadow-lg`}
+                    className={`w-20 h-20 mx-auto bg-gradient-to-br ${role.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:rotate-6 transition-transform shadow-lg`}
                   >
                     <Icon className="w-10 h-10 text-white" />
                   </div>
@@ -425,7 +434,10 @@ export default function AllLogin() {
               exponentially
             </p>
             <div className="flex flex-wrap gap-4 justify-center pt-6">
-              <button onClick={HandleRoles}  className="px-8 py-3 bg-white text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-lg transition-colors">
+              <button
+                onClick={HandleRoles}
+                className="px-8 py-3 bg-white text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-lg transition-colors"
+              >
                 Start Free 30-Day Trial
               </button>
               <button className="px-8 py-3 border-2 border-white text-white hover:bg-white/10 bg-transparent rounded-lg font-medium text-lg transition-colors">
@@ -504,4 +516,3 @@ export default function AllLogin() {
 // }
 
 // export default AllLogin
-
