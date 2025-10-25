@@ -90,7 +90,10 @@ class SessionManager {
     if (!this.isLoggingOut && !this.isNavigating && getToken()) {
       try {
         // Send pending logout to backend (do not clear token)
-        await api.post('/session/pending-logout');
+        // await api.post('/session/pending-logout');
+        await api.post('/auth/logout');
+        clearToken();
+        this.stopHeartbeat();
       } catch (e) {
         console.warn('Failed to set pending logout on unload', e);
       }
@@ -205,3 +208,4 @@ class SessionManager {
 // Create and export a singleton instance
 const sessionManager = new SessionManager();
 export default sessionManager;
+
