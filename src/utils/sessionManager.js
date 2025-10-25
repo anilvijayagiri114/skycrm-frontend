@@ -109,14 +109,15 @@ class SessionManager {
   }
 
   async performLogout() {
+    this.isLoggingOut = true;
     try {
       // Clear token from localStorage immediately
+      await api.post('/auth/logout');
       clearToken();
       // Stop heartbeat when logging out
       this.stopHeartbeat();
 
       // Send logout request to backend to clear Redis session
-      await api.post('/auth/logout');
 
       console.log('Session cleared due to tab close');
     } catch (error) {
@@ -208,4 +209,5 @@ class SessionManager {
 // Create and export a singleton instance
 const sessionManager = new SessionManager();
 export default sessionManager;
+
 
