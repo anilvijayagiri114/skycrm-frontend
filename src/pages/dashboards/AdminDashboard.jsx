@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Loader2, QrCode } from "lucide-react";
@@ -51,11 +52,8 @@ export default function AdminDashboard() {
   const leadsPagination = useQuery({
     queryKey: ["leadsPagination", pageLead, limitLead],
     queryFn: async () =>
-      (
-        await api.get(
-          `/leads/paginationLeadsList?page=${pageLead}&limit=${limitLead}`
-        )
-      ).data,
+      (await api.get(`/leads/paginationLeadsList?page=${pageLead}&limit=${limitLead}`))
+        .data,
     keepPreviousData: true,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
@@ -172,24 +170,24 @@ export default function AdminDashboard() {
             />
           </div>
           {usersPagination.isLoading ? (
-            <div className="flex justify-center items-center py-6 text-blue-600">
-              <Loader2 className="animate-spin w-5 h-5 mr-2" /> Loading
-            </div>
+              <div className="flex justify-center items-center py-6 text-blue-600">
+                <Loader2 className="animate-spin w-5 h-5 mr-2" /> Loading
+              </div>
           ) : (
-            <div>
-              <UsersTable usersData={usersPagination?.data?.users || []} />
-              <PaginationControls
-                totalPages={usersPagination.data?.totalPages}
-                page={pageUser}
-                setPage={setPageUser}
-              />
-            </div>
-          )}
-        </div>
+              <div>
+                <UsersTable usersData={usersPagination?.data?.users || []} />
+                <PaginationControls
+                   totalPages={usersPagination.data?.totalPages}
+                   page={pageUser}
+                   setPage={setPageUser}
+                />
+              </div>
+            )}
+          </div>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2 mb-10">
-        <div className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
+         <div className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Teams
           </h2>
@@ -219,13 +217,28 @@ export default function AdminDashboard() {
 
       {/* All Leads Table */}
       <section className="bg-white dark:bg-gray-700 p-5 rounded-lg shadow transition-colors">
-        {isLoading ? (
-          <div className="flex justify-center items-center py-6 text-blue-600">
-            <div className="animate-spin w-5 h-5 mr-2 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-            Loading...
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            All Leads
+          </h2>
+          <div>
+            <LimitDropdown
+              value={limitLead}
+              onChange={(newLimit) => {
+                setLimitLead(newLimit);
+                setPageLead(1);
+              }}
+            />
           </div>
-        ) : (
-          <>
+        </div>
+
+        <div className="overflow-x-auto">
+          {leadsPagination.isLoading ? (
+            <div className="flex justify-center items-center py-6 text-blue-600">
+              <Loader2 className="animate-spin w-5 h-5 mr-2" /> Loading
+            </div>
+          ) : (
+           <div>
             <table className="min-w-full text-sm">
               <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
                 <tr>
@@ -237,7 +250,7 @@ export default function AdminDashboard() {
               </thead>
 
               <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-                {leads.map((lead) => (
+                {leadsPagination.data?.leads?.map((lead) => (
                   <tr
                     key={lead._id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
@@ -268,14 +281,14 @@ export default function AdminDashboard() {
                 ))}
               </tbody>
             </table>
-
             <PaginationControls
-              totalPages={totalPages}
-              page={page}
-              setPage={setPage}
+              totalPages={leadsPagination?.data?.totalPages}
+              page={pageLead}
+              setPage={setPageLead}
             />
-          </>
-        )}
+          </div>
+          )}
+        </div>
       </section>
     </div>
   );
