@@ -65,7 +65,9 @@ class SessionManager {
     if (!this.isLoggingOut && !this.isNavigating && getToken()) {
       try {
         // Send pending logout to backend (do not clear token)
-        await api.post('/session/pending-logout');
+        // Use navigator.sendBeacon or fetch with keepalive so the request is sent during unload
+        const token = getToken();
+        await this.sendLogoutBeacon(token);
       } catch (e) {
         console.warn('Failed to set pending logout', e);
       }
@@ -89,14 +91,50 @@ class SessionManager {
     if (this.isReloading || (Date.now() - this.lastReloadTime < 2000)) return;
     if (!this.isLoggingOut && !this.isNavigating && getToken()) {
       try {
-        // Send pending logout to backend (do not clear token)
-        // await api.post('/session/pending-logout');
-        await api.post('/auth/logout');
+        // Use beacon-friendly endpoint so the request reaches the server when tab/window closes
+        const token = getToken();
+        await this.sendLogoutBeacon(token);
+        // Clear local token and stop heartbeat
         clearToken();
         this.stopHeartbeat();
       } catch (e) {
         console.warn('Failed to set pending logout on unload', e);
       }
+    }
+  }
+
+  // Use navigator.sendBeacon if available (fast & reliable during unload),
+  // otherwise use fetch with keepalive. Returns a Promise that resolves after attempting.
+  async sendLogoutBeacon(token) {
+    if (!token) return;
+    try {
+      const base = import.meta.env.VITE_API_URL || '';
+      const url = `${base.replace(/\/$/, '')}/auth/logout-beacon`;
+
+      // Try sendBeacon first
+      if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+        try {
+          const blob = new Blob([JSON.stringify({ token })], { type: 'application/json' });
+          const ok = navigator.sendBeacon(url, blob);
+          if (ok) return;
+          // fallthrough to fetch if sendBeacon reported failure
+        } catch (err) {
+          // fallthrough to fetch
+        }
+      }
+
+      // Fallback: use fetch with keepalive (supported in modern browsers)
+      if (typeof fetch === 'function') {
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+          keepalive: true
+        });
+      }
+    } catch (err) {
+      // best-effort only; nothing more we can do during unload
+      console.warn('sendLogoutBeacon failed', err);
     }
   }
 
